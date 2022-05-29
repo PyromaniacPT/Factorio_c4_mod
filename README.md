@@ -3,7 +3,7 @@ This will be a mod for Cortex Command Community Continuation edition, aka C4.
 
 The current team members are: 
 -Wazubaba
--Bebomonkey
+-Bebomonky
 -PyromaniacPT
 -Redevan1
 -iLagsouhax
