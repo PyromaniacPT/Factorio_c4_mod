@@ -1,5 +1,5 @@
 function OnPieMenu(item)
-	if item and IsHDFirearm(item) and item.PresetName == "Constructed Rocket Launcher" then
+	if item and IsHDFirearm(item) and item.PresetName == "Rocket Launcher" then
 		item = ToHDFirearm(item);
 		if item.Magazine then
 			--Remove corresponding pie slices if mode is already active
