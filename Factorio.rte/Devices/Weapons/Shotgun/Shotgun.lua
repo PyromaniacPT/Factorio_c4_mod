@@ -22,7 +22,7 @@ function Update(self)
 				--self.cockSound:Play(self.Pos);	--TODO: Separate the cocking sound from FireSound
 				self.playedSound = true;
 			end
-			if self.shell then
+			if self.shell then 
 				self.shell.Pos = self.Pos;
 				self.shell.Vel = self.Vel + Vector(-6 * self.FlipFactor, -4):RadRotate(self.RotAngle);
 				self.shell.Team = self.Team;
