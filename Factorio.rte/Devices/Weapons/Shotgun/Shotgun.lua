@@ -3,7 +3,7 @@ function Create(self)
 	self.loaded = false;
 	self.rotFactor = math.pi;
 	
-	self.cockSound = CreateSoundContainer("Engineer Shotgun Cock Sound", "Engineer.rte");
+	self.cockSound = CreateSoundContainer("Factorio Shotgun Cock Sound", "Engineer.rte");
 end
 function Update(self)
 	local actor = self:GetRootParent();
