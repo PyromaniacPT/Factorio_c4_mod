@@ -1,5 +1,4 @@
 function Create(self)
-	self.disintegrationStrength = 50;
 	self.EffectRotAngle = self.Vel.AbsRadAngle;
 	--Check backward (second argument) on the first frame as the projectile might be bouncing off something immediately
 	PulsarDissipate(self, true);
@@ -38,13 +37,6 @@ function PulsarDissipate(self, inverted)
 		local mo = MovableMan:GetMOFromID(moid);
 		if mo then
 			hit = true;
-
---			local melt = CreateMOPixel("Disintegrator");
---			melt.Pos = self.Pos;
---			melt.Team = self.Team;
---			melt.Sharpness = mo.RootID;
---			melt.PinStrength = self.disintegrationStrength or 1;
---			MovableMan:AddMO(melt);
 		end
 	else
 		local penetration = self.Mass * self.Sharpness * self.Vel.Magnitude;
