@@ -17,16 +17,14 @@ function Create(self)
 	
 	self.Accelerate = CreateSoundContainer("Accelerate Destroyer", "Factorio.rte");
 
-	self.Death = CreateSoundContainer("Death Destroyer", "Factorio.rte");
-
 	self.AlertSound = CreateSoundContainer("Factorio Warning", "Factorio.rte");
 	
-	self.scanLoop = CreateSoundContainer("Scan Loop Destroyer", "Factorio.rte");
-	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Destroyer", "Factorio.rte");
-	self.scanLockOn = CreateSoundContainer("Scan Lock On Destroyer", "Factorio.rte");
-	self.scanLockOff = CreateSoundContainer("Scan Lock Off Destroyer", "Factorio.rte");
+	self.scanLoop = CreateSoundContainer("Scan Loop Robo", "Factorio.rte");
+	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Robo", "Factorio.rte");
+	self.scanLockOn = CreateSoundContainer("Scan Lock On Robo", "Factorio.rte");
+	self.scanLockOff = CreateSoundContainer("Scan Lock Off Robo", "Factorio.rte");
 	
-	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Destroyer", "Factorio.rte");
+	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Robo", "Factorio.rte");
 	
 	self.scanTimer = Timer();
 	self.LifeSpanTimer = Timer();
@@ -77,8 +75,8 @@ function Create(self)
 	self.accsin = 0;
 	self.GlobalAccScalar = 0.1;
 	
-	self.loopFrames = 12;
-	self.Frame = 12;
+	self.loopFrames = 10;
+	self.Frame = 10;
 end
 
 function Update(self)
@@ -602,8 +600,6 @@ function Destroy(self)
 	self.aggroScanLoop:Stop(-1);
 	
 	self.dyingWarningLoop:Stop(-1)
-
-	self.Death:Stop(-1)
 
 	self.AlertSound:Stop(-1)
 

@@ -17,16 +17,14 @@ function Create(self)
 	
 	self.Accelerate = CreateSoundContainer("Accelerate Defender", "Factorio.rte");
 
-	self.Death = CreateSoundContainer("Death Defender", "Factorio.rte");
-
 	self.AlertSound = CreateSoundContainer("Factorio Warning", "Factorio.rte");
 	
-	self.scanLoop = CreateSoundContainer("Scan Loop Defender", "Factorio.rte");
-	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Defender", "Factorio.rte");
-	self.scanLockOn = CreateSoundContainer("Scan Lock On Defender", "Factorio.rte");
-	self.scanLockOff = CreateSoundContainer("Scan Lock Off Defender", "Factorio.rte");
+	self.scanLoop = CreateSoundContainer("Scan Loop Robo", "Factorio.rte");
+	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Robo", "Factorio.rte");
+	self.scanLockOn = CreateSoundContainer("Scan Lock On Robo", "Factorio.rte");
+	self.scanLockOff = CreateSoundContainer("Scan Lock Off Robo", "Factorio.rte");
 	
-	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Defender", "Factorio.rte");
+	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Robo", "Factorio.rte");
 	
 	self.scanTimer = Timer();
 	self.LifeSpanTimer = Timer();
@@ -121,10 +119,6 @@ function Update(self)
 	end
 	
 	self.dyingWarningLoop.Pos = self.Pos;
-
-	if self.Health < 0 then
-		self.Death:Play(self.Pos);
-	end
 
 	if self.LifeSpanTimer1:IsPastSimMS(25000) then
 		if self:IsPlayerControlled() then
@@ -602,8 +596,6 @@ function Destroy(self)
 	self.aggroScanLoop:Stop(-1);
 	
 	self.dyingWarningLoop:Stop(-1)
-
-	self.Death:Stop(-1)
 
 	self.AlertSound:Stop(-1)
 
