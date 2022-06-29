@@ -2,7 +2,7 @@ function Create(self)
 	self.active = false
 	self.canSpawn = false
 	
-	self.Deploy = CreateSoundContainer("Deploy Destroyer", "Factorio.rte");
+	self.Deploy = CreateSoundContainer("Deploy Robo", "Factorio.rte");
 	
 	self.actorPresetName = "Destroyer"
 	
