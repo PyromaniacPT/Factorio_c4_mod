@@ -19,12 +19,12 @@ function Create(self)
 
 	self.AlertSound = CreateSoundContainer("Factorio Warning", "Factorio.rte");
 	
-	self.scanLoop = CreateSoundContainer("Scan Loop Defender", "Factorio.rte");
-	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Defender", "Factorio.rte");
-	self.scanLockOn = CreateSoundContainer("Scan Lock On Defender", "Factorio.rte");
-	self.scanLockOff = CreateSoundContainer("Scan Lock Off Defender", "Factorio.rte");
+	self.scanLoop = CreateSoundContainer("Scan Loop Robo", "Factorio.rte");
+	self.aggroScanLoop = CreateSoundContainer("Aggro Scan Loop Robo", "Factorio.rte");
+	self.scanLockOn = CreateSoundContainer("Scan Lock On Robo", "Factorio.rte");
+	self.scanLockOff = CreateSoundContainer("Scan Lock Off Robo", "Factorio.rte");
 	
-	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Defender", "Factorio.rte");
+	self.dyingWarningLoop = CreateSoundContainer("Dying Warning Loop Robo", "Factorio.rte");
 	
 	self.scanTimer = Timer();
 	self.LifeSpanTimer = Timer();

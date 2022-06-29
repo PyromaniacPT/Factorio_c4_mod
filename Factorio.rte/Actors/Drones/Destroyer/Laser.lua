@@ -15,7 +15,7 @@ function Create(self)
 	self.parent = nil;
 	self.penetrationStrength = 170;
 
-	self.LaserSoundLoop = CreateSoundContainer("Factorio Laser Loop", "Factorio.rte");
+	self.LaserSoundLoop = CreateSoundContainer("Factorio Laser Loop Robo", "Factorio.rte");
 end
 
 function Update(self)
