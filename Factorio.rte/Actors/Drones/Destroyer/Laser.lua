@@ -1,6 +1,6 @@
 function Create(self)
 	self.fireTimer = Timer()
-	self.range = math.sqrt(FrameMan.PlayerScreenWidth^2 + FrameMan.PlayerScreenHeight^2)/2;
+	self.range = math.sqrt(FrameMan.PlayerScreenWidth^1.8 + FrameMan.PlayerScreenHeight^1.8)/2;
 	self.shotCounter = 0;	--TODO: Rename/describe this variable better
 	self.strengthVariation = 5;
 	self.activity = ActivityMan:GetActivity();
@@ -14,6 +14,8 @@ function Create(self)
 	
 	self.parent = nil;
 	self.penetrationStrength = 170;
+
+	self.LaserSoundLoop = CreateSoundContainer("Factorio Laser Loop", "Factorio.rte");
 end
 
 function Update(self)
@@ -50,12 +52,15 @@ function Update(self)
 		end
 		
 		if self.parent:GetNumberValue("Attacking") == 1 then
+			if not self.LaserSoundLoop:IsBeingPlayed() then
+				self.LaserSoundLoop:Play(self.Pos);
+			end
+			self.LaserSoundLoop.Pos = self.Pos;
 			if self.reloadTimer:IsPastSimMS(10) then
 				self.roundsLoaded = math.min(self.roundsLoaded + 1, 3)
 				self.reloadTimer:Reset()
 			end
 			if self.roundsLoaded > 0 and self.fireTimer:IsPastSimMS(10) then
-
 
 				local startPos = self.Pos + Vector(6 * self.FlipFactor, 0):RadRotate(self.RotAngle)
 				local hitPos = Vector(startPos.X, startPos.Y);
@@ -115,6 +120,16 @@ function Update(self)
 
 				self.fireTimer:Reset()
 			end
+		else
+			if self.LaserSoundLoop:IsBeingPlayed() then
+				self.LaserSoundLoop:Stop(-1);
+			end
 		end
 	end
+end
+
+function Destroy(self)
+
+	self.LaserSoundLoop:Stop(-1);
+
 end
