@@ -96,6 +96,11 @@ function Update(self)
 							end
 						end
 					end
+					local pix = CreateMOPixel("Destroyer Red Glow " .. math.floor(strengthFactor * 4 + 0.5), "Factorio.rte");
+					pix.Pos = gapPos;
+					pix.Sharpness = self.penetrationStrength/6;
+					pix.Vel = Vector(trace.X, trace.Y):SetMagnitude(6);
+					MovableMan:AddParticle(pix);
 				end
 				if rayLength ~= 0 then
 					trace = SceneMan:ShortestDistance(startPos, gapPos, SceneMan.SceneWrapsX);
@@ -108,10 +113,9 @@ function Update(self)
 					end
 					local particleCount = trace.Magnitude * RangeRand(0.4, 0.8);
 					for i = 0, particleCount do
-						local pix = CreateMOPixel("Laser Destroyer", "Factorio.rte");
+						local pix = CreateMOPixel("Destroyer Red Glow " .. math.random(2));
 						pix.Pos = startPos + trace * i/particleCount;
 						pix.Vel = self.Vel;
-						pix.Sharpness = self.penetrationStrength/6;
 						MovableMan:AddParticle(pix);
 					end
 				end
