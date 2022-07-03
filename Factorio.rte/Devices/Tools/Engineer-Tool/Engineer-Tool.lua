@@ -72,7 +72,7 @@ function Create(self)
 	self.startResource = 0;
 	self.resource = self.startResource * self.fullMag;
 
-	self.clearer = CreateMOSRotating("Constructor Terrain Clearer");
+	self.clearer = CreateMOSRotating("Engineer-Tool Terrain Clearer");
 
 	self.digStrength = 200;	--The StructuralIntegrity limit of harvestable materials
 	
@@ -195,7 +195,7 @@ function Update(self)
 										if terrCheck == rte.goldID then
 											self.clearer.Pos = Vector(checkPos.X, checkPos.Y);
 											self.clearer:EraseFromTerrain();
-											local collectFX = CreateMOPixel("Particle Constructor Gather Material Gold");
+											local collectFX = CreateMOPixel("Particle Engineer-Tool Gather Material Gold");
 											collectFX.Pos = Vector(checkPos.X, checkPos.Y);
 											collectFX.Sharpness = self.ID;
 											collectFX.Vel.Y = -RangeRand(2, 3);
@@ -222,7 +222,7 @@ function Update(self)
 								digWeight = digWeight/9;
 								self.resource = math.min(self.resource + digWeight * self.Income, self.maxResource);
 								
-								local collectFX = CreateMOPixel("Particle Constructor Gather Material" .. (digWeight > 0.5 and " Big" or ""));
+								local collectFX = CreateMOPixel("Particle Engineer-Tool Gather Material" .. (digWeight > 0.5 and " Big" or ""));
 								collectFX.Pos = Vector(digPos.X, digPos.Y);
 								collectFX.Sharpness = self.ID;
 								collectFX.Vel.Y = 10/(collectFX.Mass + digWeight);
