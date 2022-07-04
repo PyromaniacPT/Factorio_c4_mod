@@ -62,18 +62,19 @@ function Update(self)
 			end
 			if self.roundsLoaded > 0 and self.fireTimer:IsPastSimMS(10) then
 
+				local actor = self:GetRootParent();
 				local startPos = self.Pos + Vector(6 * self.FlipFactor, 0):RadRotate(self.RotAngle)
 				local hitPos = Vector(startPos.X, startPos.Y);
 				local gapPos = Vector(startPos.X, startPos.Y);
 				local trace = Vector(range * self.FlipFactor, 0):RadRotate(self.RotAngle);
 				--Use higher pixel skip first to find a rough estimate
 				local skipPx = 4;
-				local rayLength = SceneMan:CastObstacleRay(startPos, trace, hitPos, gapPos, mo.ID, self.Team, rte.airID, skipPx);
+				local rayLength = SceneMan:CastObstacleRay(startPos, trace, hitPos, gapPos, actor.ID, self.Team, rte.airID, skipPx);
 
 				if rayLength >= 0 then
 					gapPos = gapPos - Vector(trace.X, trace.Y):SetMagnitude(skipPx);
 					skipPx = 1;
-					local shortRay = SceneMan:CastObstacleRay(gapPos, Vector(trace.X, trace.Y):SetMagnitude(rayLength + skipPx), hitPos, gapPos, mo.ID, self.Team, rte.airID, skipPx);
+					local shortRay = SceneMan:CastObstacleRay(gapPos, Vector(trace.X, trace.Y):SetMagnitude(rayLength + skipPx), hitPos, gapPos, actor.ID, self.Team, rte.airID, skipPx);
 					gapPos = gapPos - Vector(trace.X, trace.Y):SetMagnitude(skipPx);
 					local strengthFactor = math.max(1 - rayLength/self.range, math.random()) * (self.shotCounter + 1)/self.strengthVariation;
 
