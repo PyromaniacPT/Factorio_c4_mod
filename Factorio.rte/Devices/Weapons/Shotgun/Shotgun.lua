@@ -2,13 +2,14 @@ function Create(self)
 	self.pullTimer = Timer();
 	self.loaded = false;
 	self.rotFactor = math.pi;
-	
-	self.cockSound = CreateSoundContainer("Factorio Shotgun Cock Sound", "Engineer.rte");
+
+	self.cockSound = CreateSoundContainer("Factorio Shotgun Cock Sound", "Factorio.rte");
 end
 function Update(self)
+	local parent;
 	local actor = self:GetRootParent();
-	if not (actor and IsAHuman(actor)) then
-		self.pullTimer:Reset();
+	if actor and IsAHuman(actor) then
+		parent = ToAHuman(actor);
 	end
 	if self.FiredFrame then
 		self.shell = CreateMOSParticle("Shell");
@@ -16,13 +17,13 @@ function Update(self)
 		self.playedSound = false;
 		self.rotFactor = math.pi;
 	end
-	if not self.loaded and self.RoundInMagCount > 0 and not self.reloadCycle then
+	if parent and not self.loaded and self.RoundInMagCount > 0 and not self.reloadCycle then
 		if self.pullTimer:IsPastSimMS(15000/self.RateOfFire) then
 			if not self.playedSound then
-				--self.cockSound:Play(self.Pos);	--TODO: Separate the cocking sound from FireSound
+				self.cockSound:Play(self.Pos);
 				self.playedSound = true;
 			end
-			if self.shell then 
+			if self.shell then
 				self.shell.Pos = self.Pos;
 				self.shell.Vel = self.Vel + Vector(-6 * self.FlipFactor, -4):RadRotate(self.RotAngle);
 				self.shell.Team = self.Team;
@@ -30,7 +31,7 @@ function Update(self)
 				self.shell = nil;
 			end
 			self.Frame = 1;
-			self.SupportOffset = Vector(-2, 4);
+			self.SupportOffset = Vector(-2, 5);
 			local rotTotal = math.sin(self.rotFactor) * 0.2;
 			self.RotAngle = self.RotAngle + self.FlipFactor * rotTotal;
 			local jointOffset = Vector(self.JointOffset.X * self.FlipFactor, self.JointOffset.Y):RadRotate(self.RotAngle);
@@ -40,7 +41,7 @@ function Update(self)
 		if self.rotFactor <= 0 then
 			self.loaded = true;
 			self.Frame = 0;
-			self.SupportOffset = Vector(1, 3);
+			self.SupportOffset = Vector(1, 4);
 			self.rotFactor = 0;
 		end
 	else
