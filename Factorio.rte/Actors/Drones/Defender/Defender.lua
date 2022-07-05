@@ -189,7 +189,7 @@ function Update(self)
 	end
 
 	if self.LifeSpanTimer2:IsPastSimMS(35500) then
-		self.AlertSound:Stop(-1)
+		self.AlertSound:Stop()
 		self.AlertCheck = false;
 	end
 
