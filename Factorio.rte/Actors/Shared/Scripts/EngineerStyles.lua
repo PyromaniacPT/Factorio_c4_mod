@@ -3,7 +3,8 @@ function Create(self)
 	self.secret = 0.01;
 	self.hats = {"Engineer Light Helmet", "Engineer Light Mask"};
 
-	self.MaskLoop = CreateSoundContainer("Breathing Effect", "Factorio.rte");
+	self.maskLoop = CreateSoundContainer("Breathing Effect", "Factorio.rte");
+	self.heartLoop = CreateSoundContainer("Heart Effect", "Factorio.rte");
 
 	if not self:NumberValueExists("Equipped") then
 		local headgear;
@@ -33,19 +34,29 @@ function Update(self)
 		for i = 1, MovableMan:GetMOIDCount()-1 do
 			local part = MovableMan:GetMOFromID(i)
 			if part.RootID == self.RootID and part.PresetName == "Engineer Light Mask" then
-				if not self.MaskLoop:IsBeingPlayed() then
-					self.MaskLoop:Play(self.Pos);
+				if not self.maskLoop:IsBeingPlayed() then
+					self.maskLoop:Play(self.Pos);
 				end
-				self.MaskLoop.Pos = self.Pos;
+				self.maskLoop.Pos = self.Pos;
+				if self.Health < 25 then
+					if not self.heartLoop:IsBeingPlayed() then
+						self.heartLoop:Play(self.Pos);
+					end
+					self.heartLoop.Pos = self.Pos;
+					self.maskLoop:Stop();
+				end
 		 	end
 		end
 	else
-		self.MaskLoop:Stop();
+		self.maskLoop:Stop();
+
+		self.heartLoop:Stop();
 	end
 end
 
 function Destroy(self)
 
-	self.MaskLoop:Stop(-1);
+	self.maskLoop:Stop(-1);
 
+	self.heartLoop:Stop(-1);
 end
