@@ -97,6 +97,12 @@ function Update(self)
 							end
 						end
 					end
+					local smoke = CreateMOSParticle("Tiny Smoke Ball 1 Glow Red " .. (math.random(2)), "Factorio.rte"); -- Max is 2
+					smoke.Pos = gapPos;
+					smoke.Vel = Vector(-trace.X, -trace.Y):SetMagnitude(math.random(3, 6)):RadRotate(RangeRand(-1.5, 1.5));
+					smoke.Lifetime = smoke.Lifetime * strengthFactor;
+					MovableMan:AddParticle(smoke);
+
 					local pix = CreateMOPixel("Destroyer Red Glow " .. math.floor(strengthFactor * 4 + 0.5), "Factorio.rte");
 					pix.Pos = gapPos;
 					pix.Sharpness = self.penetrationStrength/6;
@@ -114,7 +120,7 @@ function Update(self)
 					end
 					local particleCount = trace.Magnitude * RangeRand(0.4, 0.8);
 					for i = 0, particleCount do
-						local pix = CreateMOPixel("Destroyer Red Glow " .. math.random(2));
+						local pix = CreateMOPixel("Destroyer Red Glow " .. math.random(2)); -- Max is 4
 						pix.Pos = startPos + trace * i/particleCount;
 						pix.Vel = self.Vel;
 						MovableMan:AddParticle(pix);
