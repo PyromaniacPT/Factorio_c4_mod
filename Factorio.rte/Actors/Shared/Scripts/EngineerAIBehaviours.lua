@@ -2,7 +2,7 @@ EngineerAIBehaviours = {};
 
 function EngineerAIBehaviours.handleMovement(self)
 
-	local moving = self.controller:IsState(Controller.MOVE_LEFT) or self.controller:IsState(Controller.MOVE_RIGHT);
+--	local moving = self.controller:IsState(Controller.MOVE_LEFT) or self.controller:IsState(Controller.MOVE_RIGHT);
 	
 	--NOTE: you could also put in things like your falling scream here easily with very little overhead
 	
@@ -24,31 +24,56 @@ function EngineerAIBehaviours.handleMovement(self)
 			local mat = nil
 			local pixelPos = footPos + Vector(0, 4)
 			local checkPix = SceneMan:GetTerrMatter(pixelPos.X, pixelPos.Y);
---			   Grass
+		if self.StrideFrame then
+			--	Grass
 			if checkPix == 128 then
-				if (moving) then
-					if (self.moveSoundWalkTimer:IsPastSimMS(455)) then -- Lower is less delay / Faster is more delay
-						self.environmentSounds.Grass:Play(self.Pos)
-						self.moveSoundWalkTimer:Reset();
-					end
-				elseif self.wasInAir then
-					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.fakejumpstop:IsPastSimMS(100) then
-						self.wasInAir = false;
-						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
-							self.environmentSounds.landGrass:Play(self.Pos);
-							self.moveSoundTimer:Reset();
-						end
-					end
-				end
---				   Vegetation
+				self.environmentSounds.Grass:Play(self.Pos)
+
+			--		Vegetation
 			elseif checkPix == 130 then
-				if (moving) then
-					if (self.moveSoundWalkTimer:IsPastSimMS(455)) then
-						self.environmentSounds.Grass2:Play(self.Pos)
-						self.moveSoundWalkTimer:Reset();
+				self.environmentSounds.Grass2:Play(self.Pos)
+
+			--		Bedrock			Cave Ceiling	   Concrete
+			elseif checkPix == 13 or checkPix == 15 or checkPix == 177 then
+				self.environmentSounds.Concrete:Play(self.Pos);
+
+			--	Wet Concrete		   Metal			 Mega Metal		  Mangled Metal
+			elseif checkPix == 164 or checkPix == 178 or checkPix == 179 or checkPix == 180 then
+				self.environmentSounds.Concrete2:Play(self.Pos);
+
+			--	   Dense Earth		Dense Red Earth
+			elseif checkPix == 11 or checkPix == 16 then
+				self.environmentSounds.Ground:Play(self.Pos);
+
+			--		Stone
+			elseif checkPix == 12 then
+				self.environmentSounds.Stones:Play(self.Pos);
+
+			--		Earth			Cave Floor
+			elseif checkPix == 10 or checkPix == 14 then
+				self.environmentSounds.Dirt:Play(self.Pos)
+
+			--	  	Sand			 Topsoil
+			elseif checkPix == 8 or checkPix == 9 then
+				self.environmentSounds.Sand:Play(self.Pos)
+
+			--		 Snow	
+			elseif checkPix == 6 then
+				self.environmentSounds.Snow:Play(self.Pos)
+			end
+		else
+
+			--	Grass			  Vegetation
+			if checkPix == 128 or checkPix == 130 then
+				if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+					if self.feetContact[1] == true or self.feetContact[2] == true then
+						self.isJumping = true
+						self.jumpTimer:Reset()
+						self.jumpStop:Reset()
 					end
-				elseif self.wasInAir then
-					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.fakejumpstop:IsPastSimMS(100) then
+				elseif self.isJumping or self.wasInAir then
+					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+						self.isJumping = false
 						self.wasInAir = false;
 						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
 							self.environmentSounds.landGrass:Play(self.Pos);
@@ -56,15 +81,17 @@ function EngineerAIBehaviours.handleMovement(self)
 						end
 					end
 				end
---				   Bedrock			Cave Ceiling	   Concrete
+			--		Bedrock			Cave Ceiling	   Concrete
 			elseif checkPix == 13 or checkPix == 15 or checkPix == 177 then
-				if (moving) then
-					if (self.moveSoundWalkTimer:IsPastSimMS(455)) then
-						self.environmentSounds.Concrete:Play(self.Pos)
-						self.moveSoundWalkTimer:Reset();
+				if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+					if self.feetContact[1] == true or self.feetContact[2] == true then
+						self.isJumping = true
+						self.jumpTimer:Reset()
+						self.jumpStop:Reset()
 					end
-				elseif self.wasInAir then
-					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.fakejumpstop:IsPastSimMS(100) then
+				elseif self.isJumping or self.wasInAir then
+					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+						self.isJumping = false
 						self.wasInAir = false;
 						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
 							self.environmentSounds.landConcrete:Play(self.Pos);
@@ -72,15 +99,17 @@ function EngineerAIBehaviours.handleMovement(self)
 						end
 					end
 				end
---				   Stone			Dense Red Earth	   Wet Concrete		   Metal			 Mega Metal		  Mangled Metal
-			elseif checkPix == 12 or checkPix == 16 or checkPix == 164 or checkPix == 178 or checkPix == 179 or checkPix == 180 then
-				if (moving) then
-					if (self.moveSoundWalkTimer:IsPastSimMS(455)) then
-						self.environmentSounds.Concrete2:Play(self.Pos)
-						self.moveSoundWalkTimer:Reset();
+			--		Wet Concrete		Metal			 Mega Metal		  Mangled Metal
+			elseif checkPix == 164 or checkPix == 178 or checkPix == 179 or checkPix == 180 then
+				if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+					if self.feetContact[1] == true or self.feetContact[2] == true then
+						self.isJumping = true
+						self.jumpTimer:Reset()
+						self.jumpStop:Reset()
 					end
-				elseif self.wasInAir then
-					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.fakejumpstop:IsPastSimMS(100) then
+				elseif self.isJumping or self.wasInAir then
+					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+						self.isJumping = false
 						self.wasInAir = false;
 						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
 							self.environmentSounds.landConcrete2:Play(self.Pos);
@@ -88,15 +117,54 @@ function EngineerAIBehaviours.handleMovement(self)
 						end
 					end
 				end
---				   	Earth			Dense Earth		  Cave Floor
-			elseif checkPix == 10 or checkPix == 11 or checkPix == 14 then
-				if (moving) then
-					if (self.moveSoundWalkTimer:IsPastSimMS(455)) then
-						self.environmentSounds.Dirt:Play(self.Pos)
-						self.moveSoundWalkTimer:Reset();
+			--	   Dense Earth		Dense Red Earth
+			elseif checkPix == 11 or checkPix == 16 then
+					if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+						if self.feetContact[1] == true or self.feetContact[2] == true then
+							self.isJumping = true
+							self.jumpTimer:Reset()
+							self.jumpStop:Reset()
+						end
+					elseif self.isJumping or self.wasInAir then
+						if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+							self.isJumping = false
+							self.wasInAir = false;
+							if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
+								self.environmentSounds.landGround:Play(self.Pos);
+								self.moveSoundTimer:Reset();
+							end
+						end
 					end
-				elseif self.wasInAir then
-					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.fakejumpstop:IsPastSimMS(100) then
+
+			--		Stone
+			elseif checkPix == 12 then
+					if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+						if self.feetContact[1] == true or self.feetContact[2] == true then
+							self.isJumping = true
+							self.jumpTimer:Reset()
+							self.jumpStop:Reset()
+						end
+					elseif self.isJumping or self.wasInAir then
+						if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+							self.isJumping = false
+							self.wasInAir = false;
+							if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
+								self.environmentSounds.landStones:Play(self.Pos);
+								self.moveSoundTimer:Reset();
+							end
+						end
+					end
+			--		Earth			Cave Floor
+			elseif checkPix == 10 or checkPix == 14 then
+				if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+					if self.feetContact[1] == true or self.feetContact[2] == true then
+						self.isJumping = true
+						self.jumpTimer:Reset()
+						self.jumpStop:Reset()
+					end
+				elseif self.isJumping or self.wasInAir then
+					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+						self.isJumping = false
 						self.wasInAir = false;
 						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
 							self.environmentSounds.landDirt:Play(self.Pos);
@@ -104,15 +172,17 @@ function EngineerAIBehaviours.handleMovement(self)
 						end
 					end
 				end
---				   	Snow			  Sand			 Topsoil
-			elseif checkPix == 6 or checkPix == 8 or checkPix == 9 then
-				if (moving) then
-					if (self.moveSoundWalkTimer:IsPastSimMS(455)) then
-						self.environmentSounds.Sand:Play(self.Pos)
-						self.moveSoundWalkTimer:Reset();
+			--		Sand			 Topsoil
+			elseif checkPix == 8 or checkPix == 9 then
+				if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+					if self.feetContact[1] == true or self.feetContact[2] == true then
+						self.isJumping = true
+						self.jumpTimer:Reset()
+						self.jumpStop:Reset()
 					end
-				elseif self.wasInAir then
-					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.fakejumpstop:IsPastSimMS(100) then
+				elseif self.isJumping or self.wasInAir then
+					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+						self.isJumping = false
 						self.wasInAir = false;
 						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
 							self.environmentSounds.landSand:Play(self.Pos);
@@ -120,9 +190,28 @@ function EngineerAIBehaviours.handleMovement(self)
 						end
 					end
 				end
+			--		Snow		
+			elseif checkPix == 6 then
+				if self.controller:IsState(Controller.BODY_JUMPSTART) == true and self.controller:IsState(Controller.BODY_CROUCH) == false and self.jumpTimer:IsPastSimMS(self.jumpDelay) and not self.isJumping then
+					if self.feetContact[1] == true or self.feetContact[2] == true then
+						self.isJumping = true
+						self.jumpTimer:Reset()
+						self.jumpStop:Reset()
+					end
+				elseif self.isJumping or self.wasInAir then
+					if (self.feetContact[1] == true or self.feetContact[2] == true) and self.jumpStop:IsPastSimMS(100) then
+						self.isJumping = false
+						self.wasInAir = false;
+						if self.Vel.Y > 0 and self.moveSoundTimer:IsPastSimMS(500) then
+							self.environmentSounds.landSnow:Play(self.Pos);
+							self.moveSoundTimer:Reset();
+						end
+					end
+				end
 			end
+		end
 
-			if self.footPixel ~= 0 then
+			if checkPix ~= 0 then
 				mat = SceneMan:GetMaterialFromID(checkPix)
 			end
 			
@@ -151,5 +240,5 @@ function EngineerAIBehaviours.handleMovement(self)
 		self.wasInAir = false;
 	end
 
-	self.wasMoving = moving;
+--	self.wasMoving = moving;
 end

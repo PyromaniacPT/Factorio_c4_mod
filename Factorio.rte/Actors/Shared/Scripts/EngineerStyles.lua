@@ -44,6 +44,8 @@ function Update(self)
 					end
 					self.heartLoop.Pos = self.Pos;
 					self.maskLoop:Stop();
+				else
+					self.heartLoop:Stop();
 				end
 		 	end
 		end
