@@ -122,7 +122,7 @@ function Update(self)
 			end
 		end
 
-		local mode = self:GetNumberValue("BuildMode");
+		local mode = self:GetNumberValue("ConstructorMode");
 		if mode == 0 then
 			-- activation
 			if self:GetStringValue("ConstructorMode") == "Defender" then
