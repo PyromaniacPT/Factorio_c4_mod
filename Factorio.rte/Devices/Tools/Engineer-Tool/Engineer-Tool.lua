@@ -10,12 +10,16 @@ function OnPieMenu(item)
 			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Construct Menu", "FactorioBuyMenu");
 			ToGameActivity(ActivityMan:GetActivity()):AddPieMenuSlice("Destroyer | Price: 1000", "BuildDrone2", Slice.RIGHT, true);
 			ToGameActivity(ActivityMan:GetActivity()):AddPieMenuSlice("Defender | Price: 500", "BuildDrone1", Slice.RIGHT, true);
+			ToGameActivity(ActivityMan:GetActivity()):AddPieMenuSlice("Cluster | Price: 450", "BuildGrenade2", Slice.RIGHT, true);
+			ToGameActivity(ActivityMan:GetActivity()):AddPieMenuSlice("Grenade | Price: 350", "BuildGrenade1", Slice.RIGHT, true);
 --			ToGameActivity(ActivityMan:GetActivity()):AddPieMenuSlice("Dig Mode", "ConstructorDigMode", Slice.DOWN, true);
 			ToGameActivity(ActivityMan:GetActivity()):AddPieMenuSlice("Go Back", "FactorioBuyMenuReturn", Slice.UP, true);
 		elseif item:GetStringValue("MenuTwo") == "Back" then
 --			item:SetStringValue("ConstructorMode", "Dig")
 			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Destroyer | Price: 1000", "BuildDrone2");
 			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Defender | Price: 500", "BuildDrone1");
+			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Grenade | Price: 350", "BuildGrenade1");
+			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Cluster | Price: 450", "BuildGrenade2");
 --			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Dig Mode", "ConstructorDigMode");
 			ToGameActivity(ActivityMan:GetActivity()):RemovePieMenuSlice("Go Back", "FactorioBuyMenuReturn");
 		end
@@ -125,34 +129,31 @@ function Update(self)
 		local mode = self:GetNumberValue("ConstructorMode");
 		if mode == 0 then
 			-- activation
-			if self:GetStringValue("ConstructorMode") == "Defender" then
-				local ItemPrices = {}
+			local ItemPrices = {}
 				ItemPrices[1] = 500;	-- Defender
 				ItemPrices[2] = 1000;	-- Destroyer
-				ItemPrices[3] = 1800;	-- Assembly
-				ItemPrices[4] = 3000;	-- Some other Shit
-				if self.resource >= ItemPrices[1] then
-					self.Spent = 1
-					self.resource = self.resource - 500
---					print("We Just Spent 500 Dollars")
-					actor:AddInventoryItem(CreateTDExplosive("Defender Capsule", "Factorio.rte"))
-					if self.resource < ItemPrices[1] then
---						print("We have less than 500 Dollars")
+				ItemPrices[3] = 350;	-- Regular Grenade
+				ItemPrices[4] = 450;	-- Cluster Grenade
+				ItemPrices[5] = 1800;	-- Assembly
+				if self:GetStringValue("ConstructorMode") == "Defender" then
+					if self.resource >= ItemPrices[1] then
+						self.Spent = 1
+						self.resource = self.resource - 500
+--						print("We Just Spent 500 Dollars")
+						actor:AddInventoryItem(CreateTDExplosive("Defender Capsule", "Factorio.rte"))
+						if self.resource < ItemPrices[1] then
+--							print("We have less than 500 Dollars")
+						end
+					else
+						self.Spent = 0
 					end
-				else
-					self.Spent = 0
 				end
-			end
+
 				if self:GetStringValue("ConstructorMode") == "Destroyer" then
-					local ItemPrices = {}
-					ItemPrices[1] = 500;	-- Defender
-					ItemPrices[2] = 1000;	-- Destroyer
-					ItemPrices[3] = 1800;	-- Assembly
-					ItemPrices[4] = 3000;	-- Some other Shit
 					if self.resource >= ItemPrices[2] then
 						self.Spent = 1
 						self.resource = self.resource - 1000
---						print("We Just Spent 1000 Dollars")
+--							print("We Just Spent 1000 Dollars")
 						actor:AddInventoryItem(CreateTDExplosive("Destroyer Capsule", "Factorio.rte"))
 						if self.resource < ItemPrices[2] then
 --							print("We have less than 1000 Dollars")
@@ -161,6 +162,35 @@ function Update(self)
 						self.Spent = 0
 					end
 				end
+
+				if self:GetStringValue("ConstructorMode") == "GrenadeA" then
+					if self.resource >= ItemPrices[3] then
+						self.Spent = 1
+						self.resource = self.resource - 350
+							print("We Just Spent 350 Dollars")
+						actor:AddInventoryItem(CreateTDExplosive("Grenade", "Factorio.rte"))
+						if self.resource < ItemPrices[2] then
+							print("We have less than 350 Dollars")
+						end
+					else
+						self.Spent = 0
+					end
+				end
+
+				if self:GetStringValue("ConstructorMode") == "GrenadeB" then
+					if self.resource >= ItemPrices[4] then
+						self.Spent = 1
+						self.resource = self.resource - 450
+							print("We Just Spent 450 Dollars")
+						actor:AddInventoryItem(CreateTDExplosive("Cluster Grenade", "Factorio.rte"))
+						if self.resource < ItemPrices[2] then
+							print("We have less than 450 Dollars")
+						end
+					else
+						self.Spent = 0
+					end
+				end
+
 				if self.Spent == 1 then
 					self:SetStringValue("ConstructorMode", "Dig");
 					self.Spent = 0
