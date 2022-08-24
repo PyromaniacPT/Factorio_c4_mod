@@ -28,8 +28,7 @@ function Create(self)
 	
 	self.scanTimer = Timer();
 	self.LifeSpanTimer = Timer();
-	self.LifeSpanTimer1 = Timer();
-	self.LifeSpanTimer2 = Timer();
+	self.lifespancheckA, self.lifespancheckB = Timer(), Timer()
 	self.scanDelay = 4000;
 	
 	self.Moving = false;
@@ -120,11 +119,19 @@ function Update(self)
 	
 	self.dyingWarningLoop.Pos = self.Pos;
 
-	if self.Health < 0 then
-		self.Death:Play(self.Pos);
-	end
+--	if self.Health < 0 then
+--		self.Death:Play(self.Pos);
+--	end
 
-	if self.LifeSpanTimer1:IsPastSimMS(80000) then
+	self.lifespancheck0 = self.lifespancheckA:IsPastSimMS(80000)
+	self.lifespancheck1 = self.lifespancheckA:IsPastSimMS(80500)
+	self.lifespancheck2 = self.lifespancheckA:IsPastSimMS(88000)
+
+	self.lifespancheck3 = self.lifespancheckB:IsPastSimMS(105000)
+	self.lifespancheck4 = self.lifespancheckB:IsPastSimMS(105500)
+	self.lifespancheck5 = self.lifespancheckB:IsPastSimMS(108000)
+
+	if self.lifespancheck0 then
 		if self:IsPlayerControlled() then
 			self.Seconds = CreateAEmitter("25 Seconds")
 			self.Seconds.Pos = self.Pos + Vector(0, -30)
@@ -145,12 +152,12 @@ function Update(self)
 		end
 	end
 
-	if self.LifeSpanTimer1:IsPastSimMS(80500) then
+	if self.lifespancheck1 then
 		self.AlertSound:Stop()
 		self.AlertCheck = false;
 	end
 
-	if self.LifeSpanTimer1:IsPastSimMS(88000) then
+	if self.lifespancheck2 then
 		self.AlertSound:Stop() -- Just incase :b
 		if MovableMan:IsParticle(self.Seconds) then
 			self.Seconds.ToDelete = true
@@ -158,25 +165,25 @@ function Update(self)
 	end
 -- We are done with 25 Seconds
 
-	if self.LifeSpanTimer2:IsPastSimMS(105000) then
-		self.LifeSpanTimer1:Reset()
-		if self:IsPlayerControlled() then
-			self.Seconds = CreateAEmitter("15 Seconds")
-			self.Seconds.Pos = self.Pos + Vector(0, -30)
-			MovableMan:AddParticle(self.Seconds)
-			self.Seconds.ToDelete = false
-			if not self.AlertCheck then
-				self.AlertSound:Play(self.Pos)
-				self.AlertCheck = true;
-			end
-		else
-			self.Seconds = CreateAEmitter("Null Emitter", "Base.rte")
-			MovableMan:AddParticle(self.Seconds)
-			self.Seconds.ToDelete = false
-			if not self.AlertCheck then
-				self.AlertSound:Play(self.Pos)
-				self.AlertCheck = true;
-			end
+	if self.lifespancheck3 then
+		self.lifespancheckA:Reset()
+			if self:IsPlayerControlled() then
+				self.Seconds = CreateAEmitter("15 Seconds")
+				self.Seconds.Pos = self.Pos + Vector(0, -30)
+				MovableMan:AddParticle(self.Seconds)
+				self.Seconds.ToDelete = false
+				if not self.AlertCheck then
+					self.AlertSound:Play(self.Pos)
+					self.AlertCheck = true;
+				end
+			else
+				self.Seconds = CreateAEmitter("Null Emitter", "Base.rte")
+				MovableMan:AddParticle(self.Seconds)
+				self.Seconds.ToDelete = false
+				if not self.AlertCheck then
+					self.AlertSound:Play(self.Pos)
+					self.AlertCheck = true;
+				end
 		end
 		if self.smokeTimer:IsPastSimMS(self.smokeDelay) then
 			if RangeRand(1, 0) > (0.5) then
@@ -191,19 +198,19 @@ function Update(self)
 			self.smokeDelay = math.random(200,30)
 		end
 	end
-
-	if self.LifeSpanTimer2:IsPastSimMS(105500) then
+	
+	if self.lifespancheck4 then
 		self.AlertSound:Stop()
 		self.AlertCheck = false;
 	end
-
-	if self.LifeSpanTimer2:IsPastSimMS(108000) then
+	
+	if self.lifespancheck5 then
 		self.AlertSound:Stop() -- Just incase :b
 		if MovableMan:IsParticle(self.Seconds) then
 			self.Seconds.ToDelete = true
 		end
 	end
-
+	
 	if self.LifeSpanTimer:IsPastSimMS(120000) then
 		self.MaxHealth = -100;
 	end

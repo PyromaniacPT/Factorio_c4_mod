@@ -28,8 +28,7 @@ function Create(self)
 	
 	self.scanTimer = Timer();
 	self.LifeSpanTimer = Timer();
-	self.LifeSpanTimer1 = Timer();
-	self.LifeSpanTimer2 = Timer();
+	self.lifespancheckA, self.lifespancheckB = Timer(), Timer()
 	self.scanDelay = 4000;
 	
 	self.Moving = false;
@@ -120,7 +119,19 @@ function Update(self)
 	
 	self.dyingWarningLoop.Pos = self.Pos;
 
-	if self.LifeSpanTimer1:IsPastSimMS(25000) then
+--	if self.Health < 0 then
+--		self.Death:Play(self.Pos);
+--	end
+
+	self.lifespancheck0 = self.lifespancheckA:IsPastSimMS(25000)
+	self.lifespancheck1 = self.lifespancheckA:IsPastSimMS(25500)
+	self.lifespancheck2 = self.lifespancheckA:IsPastSimMS(28000)
+
+	self.lifespancheck3 = self.lifespancheckB:IsPastSimMS(35000)
+	self.lifespancheck4 = self.lifespancheckB:IsPastSimMS(35500)
+	self.lifespancheck5 = self.lifespancheckB:IsPastSimMS(45000)
+
+	if self.lifespancheck0 then
 		if self:IsPlayerControlled() then
 			self.Seconds = CreateAEmitter("25 Seconds")
 			self.Seconds.Pos = self.Pos + Vector(0, -30)
@@ -141,12 +152,12 @@ function Update(self)
 		end
 	end
 
-	if self.LifeSpanTimer1:IsPastSimMS(25500) then
+	if self.lifespancheck1 then
 		self.AlertSound:Stop()
 		self.AlertCheck = false;
 	end
 
-	if self.LifeSpanTimer1:IsPastSimMS(28000) then
+	if self.lifespancheck2 then
 		self.AlertSound:Stop() -- Just incase :b
 		if MovableMan:IsParticle(self.Seconds) then
 			self.Seconds.ToDelete = true
@@ -154,8 +165,8 @@ function Update(self)
 	end
 -- We are done with 25 Seconds
 
-	if self.LifeSpanTimer2:IsPastSimMS(35000) then
-		self.LifeSpanTimer1:Reset()
+	if self.lifespancheck3 then
+		self.lifespancheckA:Reset()
 		if self:IsPlayerControlled() then
 			self.Seconds = CreateAEmitter("15 Seconds")
 			self.Seconds.Pos = self.Pos + Vector(0, -30)
@@ -188,12 +199,12 @@ function Update(self)
 		end
 	end
 
-	if self.LifeSpanTimer2:IsPastSimMS(35500) then
+	if self.lifespancheck4 then
 		self.AlertSound:Stop()
 		self.AlertCheck = false;
 	end
 
-	if self.LifeSpanTimer2:IsPastSimMS(38000) then
+	if self.lifespancheck5 then
 		self.AlertSound:Stop() -- Just incase :b
 		if MovableMan:IsParticle(self.Seconds) then
 			self.Seconds.ToDelete = true
