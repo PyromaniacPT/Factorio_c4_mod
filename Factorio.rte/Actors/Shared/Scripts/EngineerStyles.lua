@@ -30,10 +30,10 @@ function Create(self)
 end
 
 function Update(self)
-	if self:IsPlayerControlled() then
-		for i = 1, MovableMan:GetMOIDCount()-1 do
-			local part = MovableMan:GetMOFromID(i)
-			if part.RootID == self.RootID and part.PresetName == "Engineer Light Mask" then
+	for i = 1, MovableMan:GetMOIDCount()-1 do
+		local part = MovableMan:GetMOFromID(i)
+		if part and part.PresetName == "Engineer Light Mask" then
+			if self:IsPlayerControlled() then
 				if not self.maskLoop:IsBeingPlayed() then
 					self.maskLoop:Play(self.Pos);
 				end
@@ -47,12 +47,12 @@ function Update(self)
 				else
 					self.heartLoop:Stop();
 				end
-		 	end
-		end
-	else
-		self.maskLoop:Stop();
-
-		self.heartLoop:Stop();
+			else
+				self.maskLoop:Stop();
+		
+				self.heartLoop:Stop();
+			end
+	 	end
 	end
 end
 

@@ -167,10 +167,10 @@ function Update(self)
 					if self.resource >= ItemPrices[3] then
 						self.Spent = 1
 						self.resource = self.resource - 350
-							print("We Just Spent 350 Dollars")
+--							print("We Just Spent 350 Dollars")
 						actor:AddInventoryItem(CreateTDExplosive("Grenade", "Factorio.rte"))
 						if self.resource < ItemPrices[2] then
-							print("We have less than 350 Dollars")
+--							print("We have less than 350 Dollars")
 						end
 					else
 						self.Spent = 0
@@ -181,10 +181,10 @@ function Update(self)
 					if self.resource >= ItemPrices[4] then
 						self.Spent = 1
 						self.resource = self.resource - 450
-							print("We Just Spent 450 Dollars")
+--							print("We Just Spent 450 Dollars")
 						actor:AddInventoryItem(CreateTDExplosive("Cluster Grenade", "Factorio.rte"))
 						if self.resource < ItemPrices[2] then
-							print("We have less than 450 Dollars")
+--							print("We have less than 450 Dollars")
 						end
 					else
 						self.Spent = 0
