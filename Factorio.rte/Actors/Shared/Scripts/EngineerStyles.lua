@@ -32,20 +32,22 @@ end
 function Update(self)
 	for i = 1, MovableMan:GetMOIDCount()-1 do
 		local part = MovableMan:GetMOFromID(i)
-		if part.RootID == self.RootID and part.PresetName == "Engineer Light Mask" then
+		if part.RootID == part.RootID then
 			if self:IsPlayerControlled() then
-				if not self.maskLoop:IsBeingPlayed() then
-					self.maskLoop:Play(self.Pos);
-				end
-				self.maskLoop.Pos = self.Pos;
-				if self.Health < 25 then
-					if not self.heartLoop:IsBeingPlayed() then
-						self.heartLoop:Play(self.Pos);
+				if part.PresetName == "Engineer Light Mask" then
+					if not self.maskLoop:IsBeingPlayed() then
+						self.maskLoop:Play(self.Pos);
 					end
-					self.heartLoop.Pos = self.Pos;
-					self.maskLoop:Stop();
-				else
-					self.heartLoop:Stop();
+					self.maskLoop.Pos = self.Pos;
+					if self.Health < 25 then
+						if not self.heartLoop:IsBeingPlayed() then
+							self.heartLoop:Play(self.Pos);
+						end
+						self.heartLoop.Pos = self.Pos;
+						self.maskLoop:Stop();
+					else
+						self.heartLoop:Stop();
+					end
 				end
 			else
 				self.maskLoop:Stop();
