@@ -127,7 +127,7 @@ function Update(self)
 
 	local TimeLeft = math.floor(self.LifeSpanTimer:LeftTillSimTimeLimitMS())
 
-	PrimitiveMan:DrawTextPrimitive(self.Pos + Vector(-10, 5), tostring(TimeLeft), true, 0)	
+	--PrimitiveMan:DrawTextPrimitive(self.Pos + Vector(-10, 5), tostring(TimeLeft), true, 0)	
 
 	local function AlertSound(self, num2)
 		if TimeLeft <= num2 then
