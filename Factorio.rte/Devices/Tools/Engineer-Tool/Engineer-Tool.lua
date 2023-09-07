@@ -1,8 +1,8 @@
-function CreateFCursor(self)
+function CreateFCursor(self, actor)
     local BASE_PATH = "Factorio.rte/"
 
     self.FCursor = CreateActor(BASE_PATH .. "Factorio Static Actor")
-	self.FCursor.Pos = self.Engineer.Pos
+	self.FCursor.Pos = actor.Pos
 	self.FCursor.Team = -1
     
 	self.FCursor.IgnoresTeamHits = true
@@ -49,7 +49,7 @@ function Create(self)
 	self.operatedByAI = false
 end
 
-function CreateMenu(self)
+function CreateMenu(self, actor)
 	self.LCPanels = {}
 
     --[[
@@ -130,25 +130,24 @@ function CreateMenu(self)
 		return "Material Count: " .. tostring(math.floor(self.Magazine and self.Magazine.RoundCount or self.resource))
 	end
 
-	local function GiveItem(ItemName)
-		self.Engineer:AddInventoryItem(CreateTDExplosive("Factorio.rte/" .. ItemName))
+	local function GiveItem(actor, ItemName)
+		actor:AddInventoryItem(CreateTDExplosive("Factorio.rte/" .. ItemName))
 	end
 
 	local ItemPrices = {500, 1000, 350, 450, 1800}
 
-
 	--To draw things properly...
 	--Label Above (Drawn Behind)
 	--Label Below (Drawn Infront)
-	self.LCPanels[1] = Root("ConstructMenu", 420, 125, 315, 170, 81, true,
+	self.LCPanels[1] = Root("ConstructMenu", 420, 165, 315, 170, 81, true,
 	{
 		Button("DefenderButton", 5, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[1], "down", true, function()
 			if self.resource >= ItemPrices[1] then
 				self.resource = self.resource - ItemPrices[1]
-				GiveItem("Defender Capsule")
-				self.SuccessSound:Play(self.Engineer.Pos)
+				GiveItem(actor, "Defender Capsule")
+				self.SuccessSound:Play(actor.Pos)
 			else
-				self.FailSound:Play(self.Engineer.Pos)
+				self.FailSound:Play(actor.Pos)
 			end
 		end,
 		function()
@@ -163,10 +162,10 @@ function CreateMenu(self)
 		Button("DestroyerButton", 43, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[2], "down", true, function()
 			if self.resource >= ItemPrices[2] then 
 				elf.resource = self.resource - ItemPrices[2]
-				GiveItem("Destroyer Capsule")
-				self.SuccessSound:Play(self.Engineer.Pos)
+				GiveItem(actor, "Destroyer Capsule")
+				self.SuccessSound:Play(actor.Pos)
 			else
-				self.FailSound:Play(self.Engineer.Pos)
+				self.FailSound:Play(actor.Pos)
 			end
 		end,
 		function()
@@ -181,10 +180,10 @@ function CreateMenu(self)
 		Button("GrenadeButton", 83, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[3], "down", true, function()
 			if self.resource >= ItemPrices[3] then
 				self.resource = self.resource - ItemPrices[3]
-				GiveItem("Grenade")
-				self.SuccessSound:Play(self.Engineer.Pos)
+				GiveItem(actor, "Grenade")
+				self.SuccessSound:Play(actor.Pos)
 			else
-				self.FailSound:Play(self.Engineer.Pos)
+				self.FailSound:Play(actor.Pos)
 			end
 		end,
 		function()
@@ -199,10 +198,10 @@ function CreateMenu(self)
 		Button("ClusterGButton", 120, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[4], "down", true, function()
 			if self.resource >= ItemPrices[4] then
 				self.resource = self.resource - ItemPrices[4]
-				GiveItem("Cluster Grenade")
-				self.SuccessSound:Play(self.Engineer.Pos)
+				GiveItem(actor, "Cluster Grenade")
+				self.SuccessSound:Play(actor.Pos)
 			else
-				self.FailSound:Play(self.Engineer.Pos)
+				self.FailSound:Play(actor.Pos)
 			end
 		end,
 		function()
@@ -212,6 +211,16 @@ function CreateMenu(self)
 			end
 			local Pos = ScreenPos(self, self.InteractiveBox["ClusterGButton"].Center.X, self.InteractiveBox["ClusterGButton"].Center.Y)
 			PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), ClusterGrenade, 0, 0)
+		end),
+
+
+		Button("CloseButton", 143, 0, 30, 30, 83, true, true, nil, nil, true, function()
+			self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
+		end,
+		function()
+			local Pos = ScreenPos(self, self.InteractiveBox["CloseButton"].Center.X, self.InteractiveBox["CloseButton"].Center.Y)
+			PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, 3), Pos + Vector(-7, -7), 20)
+			PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, -7), Pos + Vector(-7, 3), 20)
 		end),
 
 		Label("ConstructMenuTitle", 35, 0, 0, 0, MaterialCount(self), false, true, function()
@@ -361,8 +370,6 @@ function Update(self)
 	local actor = self:GetRootParent()
 	if actor and IsActor(actor) then
 		actor = ToActor(actor)
-
-		self.Engineer = actor
 		local ctrl = actor:GetController()
 		self.ctrlactor = ctrl
 
@@ -387,8 +394,8 @@ function Update(self)
 		if playerControlled then
 			if self:GetNumberValue("ActiveMenu") == 1 then
 				self:SetNumberValue("ActiveMenu", 0)
-                CreateFCursor(self)
-                CreateMenu(self)
+                CreateFCursor(self, actor)
+                CreateMenu(self, actor)
 				InitializeTables(self)
             end
 			self.operatedByAI = false
@@ -411,9 +418,9 @@ function Update(self)
 		end
 
 		if self.CursorExist then
-			UpdateFCursor(self)
+			UpdateFCursor(self, actor)
 			UpdateMenu(self)
-			FreezeActor(self)
+			FreezeActor(self, actor)
 			DrawCursor(self)
 		end
 
@@ -486,8 +493,12 @@ function Update(self)
 	end
 end
 
-function UpdateFCursor(self)
-    self.FCursor.Pos = self.Engineer.Pos -- Never leave the actor that we are controlling!
+function UpdateFCursor(self, actor)
+	for att in actor.Attachables do
+		if ToAttachable(att).PresetName == "Engineer Light Head" then
+			self.FCursor.Pos = ToAttachable(att).Pos -- Never leave the actor that we are controlling!
+		end
+	end
 
 	--If User has Mouse then we mouse, if not we Xbox the 360
 	if self.FCtrl:IsMouseControlled() == true then
@@ -533,7 +544,7 @@ function DrawCursor(self)
 	PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, self.Cursor.Pos, self.Cursor, 0, 0)
 end
 
-function FreezeActor(self)
+function FreezeActor(self, actor)
     local ControlState = {
         Controller.MOVE_UP,
         Controller.MOVE_DOWN,
@@ -551,7 +562,7 @@ function FreezeActor(self)
         Controller.WEAPON_RELOAD,
     }
     for _, input in ipairs(ControlState) do
-        self.Engineer:GetController():SetState(input, false)
+        actor:GetController():SetState(input, false)
     end
 end
 
