@@ -9,7 +9,7 @@ function CreateFCursor(self, actor)
 	self.FCursor.HUDVisible = false
 
 	MovableMan:AddActor(self.FCursor)
-    self.Activity:SwitchToActor(self.FCursor, self.ctrlactor.Player, self.Team)
+    self.Activity:SwitchToActor(self.FCursor, self.Team, self.Team)
 
     self.Mouse = self.FCursor.Pos
     self.Mid = self.FCursor.Pos
@@ -42,8 +42,8 @@ function Create(self)
 
 	self.digLength = 50
 	self.spreadRange = math.rad(self.ParticleSpreadRange)
-	self.FailSound = CreateSoundContainer("Factorio.rte.rte/Failed Construction")
-	self.SuccessSound = CreateSoundContainer("Factorio.rte.rte/Finished Construction")
+	self.FailSound = CreateSoundContainer("Factorio.rte/Failed Construction")
+	self.SuccessSound = CreateSoundContainer("Factorio.rte/Finished Construction")
 	self.SuccessSound.Volume = self.SuccessSound.Volume * 2
 
 	self.operatedByAI = false
@@ -494,11 +494,7 @@ function Update(self)
 end
 
 function UpdateFCursor(self, actor)
-	for att in actor.Attachables do
-		if ToAttachable(att).PresetName == "Engineer Light Head" then
-			self.FCursor.Pos = ToAttachable(att).Pos -- Never leave the actor that we are controlling!
-		end
-	end
+	self.FCursor.Pos = actor.Pos -- Never leave the actor that we are controlling!
 
 	--If User has Mouse then we mouse, if not we Xbox the 360
 	if self.FCtrl:IsMouseControlled() == true then
