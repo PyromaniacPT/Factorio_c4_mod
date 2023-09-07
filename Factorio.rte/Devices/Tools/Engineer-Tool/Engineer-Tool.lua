@@ -562,8 +562,8 @@ end
 
 function ScreenPos(self, PosX, PosY)
 	local Screen = Vector(
-		SceneMan:GetOffset(self.Team).X + PosX,
-		SceneMan:GetOffset(self.Team).Y + PosY
+		CameraMan:GetOffset(self.Team).X + PosX,
+		CameraMan:GetOffset(self.Team).Y + PosY
 	)
 	return Screen
 end
