@@ -551,12 +551,7 @@ function FreezeActor(self)
         Controller.WEAPON_RELOAD,
     }
     for _, input in ipairs(ControlState) do
-        self.ctrlactor:SetState(input, false)
-    end
-
-    --Precaution
-    if self.EquippedItem and self.EquippedItem.PresetName ~= "Engineer's Tool" then
-        self.ctrlactor:SetState(Controller.WEAPON_CHANGE_PREV, true)
+        self.Engineer:GetController():SetState(input, false)
     end
 end
 
