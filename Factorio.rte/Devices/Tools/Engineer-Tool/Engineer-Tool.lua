@@ -126,12 +126,16 @@ function CreateMenu(self, actor)
 		}
 	end
 
-	local function MaterialCount(self)
+	local function GetMaterialCount(self)
 		return "Material Count: " .. tostring(math.floor(self.Magazine and self.Magazine.RoundCount or self.resource))
 	end
 
 	local function GiveItem(actor, ItemName)
 		actor:AddInventoryItem(CreateTDExplosive("Factorio.rte/" .. ItemName))
+	end
+
+	local function GetBox(Name)
+		return self.InteractiveBox[Name]
 	end
 
 	local ItemPrices = {500, 1000, 350, 450, 1800}
@@ -159,7 +163,7 @@ function CreateMenu(self, actor)
 				if not Defender then
 					Defender = CreateMOSRotating("Factorio.rte/Defender Icon")
 				end
-				local Pos = ScreenPos(self, self.InteractiveBox["DefenderButton"].Center.X, self.InteractiveBox["DefenderButton"].Center.Y)
+				local Pos = ScreenPos(self, GetBox("DefenderButton").Center.X, GetBox("DefenderButton").Center.Y)
 				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Defender, 0, 0)
 			end
 		),
@@ -179,7 +183,7 @@ function CreateMenu(self, actor)
 				if not Destroyer then
 					Destroyer = CreateMOSRotating("Factorio.rte/Destroyer Icon")
 				end
-				local Pos = ScreenPos(self, self.InteractiveBox["DestroyerButton"].Center.X, self.InteractiveBox["DestroyerButton"].Center.Y)
+				local Pos = ScreenPos(self, GetBox("DestroyerButton").Center.X, GetBox("DestroyerButton").Center.Y)
 				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Destroyer, 0, 0)
 			end
 		),
@@ -199,7 +203,7 @@ function CreateMenu(self, actor)
 				if not Grenade then
 					Grenade = CreateMOSRotating("Factorio.rte/Grenade Icon")
 				end
-				local Pos = ScreenPos(self, self.InteractiveBox["GrenadeButton"].Center.X, self.InteractiveBox["GrenadeButton"].Center.Y)
+				local Pos = ScreenPos(self, GetBox("GrenadeButton").Center.X, GetBox("GrenadeButton").Center.Y)
 				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Grenade, 0, 0)
 			end
 		),
@@ -219,7 +223,7 @@ function CreateMenu(self, actor)
 				if not ClusterGrenade then
 					ClusterGrenade = CreateMOSRotating("Factorio.rte/Cluster Grenade Icon")
 				end
-				local Pos = ScreenPos(self, self.InteractiveBox["ClusterGButton"].Center.X, self.InteractiveBox["ClusterGButton"].Center.Y)
+				local Pos = ScreenPos(self, GetBox("ClusterGButton").Center.X, GetBox("ClusterGButton").Center.Y)
 				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), ClusterGrenade, 0, 0)
 			end
 		),
@@ -229,15 +233,15 @@ function CreateMenu(self, actor)
 				self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
 			end,
 			function()
-				local Pos = ScreenPos(self, self.InteractiveBox["CloseButton"].Center.X, self.InteractiveBox["CloseButton"].Center.Y)
+				local Pos = ScreenPos(self, GetBox("CloseButton").Center.X, GetBox("CloseButton").Center.Y)
 				PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, 3), Pos + Vector(-7, -7), 20)
 				PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, -7), Pos + Vector(-7, 3), 20)
 			end
 		),
 
-		Label("ConstructMenuTitle", 25, 0, 0, 0, MaterialCount(self), false, true,
+		Label("ConstructMenuTitle", 25, 0, 0, 0, GetMaterialCount(self), false, true,
 		function()
-			return MaterialCount(self)
+			return GetMaterialCount(self)
 		end
 		)
 	}
@@ -358,7 +362,7 @@ function InitializeTables(self)
         self.InteractiveBox[Parent.Name] = Box(ParentPos, ParentWidth, ParentHeight)
 
 		if SettingsMan.PrintDebugInfo then
-			print("Parent: " .. Parent.Name .. " {" .. ParentWidth .. ", " .. ParentHeight .. "}")
+			print("Parent: " .. Parent.Name .. " Pos: " .. tostring(ParentPos) .. " Size: {" .. ParentWidth .. ", " .. ParentHeight .. "}")
 		end
         if Parent.Child then
             for _, Child in ipairs(Parent.Child) do
@@ -378,13 +382,17 @@ function InitializeTables(self)
                     self.InteractiveBox[Child.Name] = Box(NewPos, ChildWidth, ChildHeight)
 
 					if SettingsMan.PrintDebugInfo then
-						print("Child: " .. Child.Name .. " {" .. ChildWidth .. ", " .. ChildHeight .. "}")
+						print("Child: " .. Child.Name .. " Pos: " .. tostring(ChildPos) .. " Size: {" .. ChildWidth .. ", " .. ChildHeight .. "}")
 					end
                 end
 
                 if Child.ControlType == "LABEL" then
 					Child.PosX = Child.PosX + Parent.PosX * Resolution.X
                     Child.PosY = Child.PosY + Parent.PosY * Resolution.Y
+
+					if SettingsMan.PrintDebugInfo then
+						print("Child: " .. Child.Name .. " Pos: {" .. Child.PosX .. ", " .. Child.PosY .. "}" .. " Size: {" .. Child.Width .. ", " .. Child.Height .. "}")
+					end
                 end
             end
         end
