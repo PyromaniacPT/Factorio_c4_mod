@@ -13,8 +13,8 @@ function CreateFCursor(self, actor)
 
     self.Mouse = self.FCursor.Pos
     self.Mid = self.FCursor.Pos
-    self.ResX2 = FrameMan.PlayerScreenWidth / 3
-    self.ResY2 = FrameMan.PlayerScreenHeight / 3
+    self.ResX2 = FrameMan.PlayerScreenWidth / 2
+    self.ResY2 = FrameMan.PlayerScreenHeight / 2
 
     self.Cursor = CreateMOSRotating(BASE_PATH .. "Factorio Mouse")
     self.Cursor.Pos = self.Mouse + Vector(4.5, 10)
@@ -77,7 +77,7 @@ function CreateMenu(self, actor)
 	CALLBACK -- Always Updating
     ]]
 
-	local function Root(N, X, Y, W, H, PALETTE, VISIBLE, SUBTABLE)
+	local function Root(N, X, Y, W, H, PALETTE, VISIBLE, Table)
 		return {
 			ControlType = "COLLECTIONBOX",
 			Name = N,
@@ -87,7 +87,7 @@ function CreateMenu(self, actor)
 			Height = H,
 			Color = PALETTE,
 			Visible = VISIBLE,
-			Child = SUBTABLE,
+			Child = Table,
 		}
 	end
 
@@ -139,94 +139,110 @@ function CreateMenu(self, actor)
 	--To draw things properly...
 	--Label Above (Drawn Behind)
 	--Label Below (Drawn Infront)
-	self.LCPanels[1] = Root("ConstructMenu", 420, 165, 315, 170, 81, true,
-	{
-		Button("DefenderButton", 5, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[1], "down", true, function()
-			if self.resource >= ItemPrices[1] then
-				self.resource = self.resource - ItemPrices[1]
-				GiveItem(actor, "Defender Capsule")
-				self.SuccessSound:Play(actor.Pos)
-			else
-				self.FailSound:Play(actor.Pos)
+
+	local CMenu = Root("ConstructMenu", 575, 190, 145, 80, 81, true, {})
+
+	CMenu.Child = {
+
+		Button("DefenderButton", 5, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[1], "down", true,
+			function()
+				if self.resource >= ItemPrices[1] then
+					self.resource = self.resource - ItemPrices[1]
+					GiveItem(actor, "Defender Capsule")
+					self.SuccessSound:Play(actor.Pos)
+				else
+					self.FailSound:Play(actor.Pos)
+				end
+			end,
+			function()
+				local Defender
+				if not Defender then
+					Defender = CreateMOSRotating("Factorio.rte/Defender Icon")
+				end
+				local Pos = ScreenPos(self, self.InteractiveBox["DefenderButton"].Center.X, self.InteractiveBox["DefenderButton"].Center.Y)
+				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Defender, 0, 0)
 			end
-		end,
+		),
+
+		Button("DestroyerButton", 40, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[2], "down", true,
+			function()
+				if self.resource >= ItemPrices[2] then 
+					self.resource = self.resource - ItemPrices[2]
+					GiveItem(actor, "Destroyer Capsule")
+					self.SuccessSound:Play(actor.Pos)
+				else
+					self.FailSound:Play(actor.Pos)
+				end
+			end,
+			function()
+				local Destroyer
+				if not Destroyer then
+					Destroyer = CreateMOSRotating("Factorio.rte/Destroyer Icon")
+				end
+				local Pos = ScreenPos(self, self.InteractiveBox["DestroyerButton"].Center.X, self.InteractiveBox["DestroyerButton"].Center.Y)
+				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Destroyer, 0, 0)
+			end
+		),
+
+		Button("GrenadeButton", 75, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[3], "down", true,
+			function()
+				if self.resource >= ItemPrices[3] then
+					self.resource = self.resource - ItemPrices[3]
+					GiveItem(actor, "Grenade")
+					self.SuccessSound:Play(actor.Pos)
+				else
+					self.FailSound:Play(actor.Pos)
+				end
+			end,
+			function()
+				local Grenade
+				if not Grenade then
+					Grenade = CreateMOSRotating("Factorio.rte/Grenade Icon")
+				end
+				local Pos = ScreenPos(self, self.InteractiveBox["GrenadeButton"].Center.X, self.InteractiveBox["GrenadeButton"].Center.Y)
+				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Grenade, 0, 0)
+			end
+		),
+
+		Button("ClusterGButton", 110, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[4], "down", true,
+			function()
+				if self.resource >= ItemPrices[4] then
+					self.resource = self.resource - ItemPrices[4]
+					GiveItem(actor, "Cluster Grenade")
+					self.SuccessSound:Play(actor.Pos)
+				else
+					self.FailSound:Play(actor.Pos)
+				end
+			end,
+			function()
+				local ClusterGrenade
+				if not ClusterGrenade then
+					ClusterGrenade = CreateMOSRotating("Factorio.rte/Cluster Grenade Icon")
+				end
+				local Pos = ScreenPos(self, self.InteractiveBox["ClusterGButton"].Center.X, self.InteractiveBox["ClusterGButton"].Center.Y)
+				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), ClusterGrenade, 0, 0)
+			end
+		),
+
+		Button("CloseButton", 130, 0, 15, 15, 83, true, true, nil, nil, true,
+			function()
+				self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
+			end,
+			function()
+				local Pos = ScreenPos(self, self.InteractiveBox["CloseButton"].Center.X, self.InteractiveBox["CloseButton"].Center.Y)
+				PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, 3), Pos + Vector(-7, -7), 20)
+				PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, -7), Pos + Vector(-7, 3), 20)
+			end
+		),
+
+		Label("ConstructMenuTitle", 25, 0, 0, 0, MaterialCount(self), false, true,
 		function()
-			local Defender
-			if not Defender then
-				Defender = CreateMOSRotating("Factorio.rte/Defender Icon")
-			end
-			local Pos = ScreenPos(self, self.InteractiveBox["DefenderButton"].Center.X, self.InteractiveBox["DefenderButton"].Center.Y)
-			PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Defender, 0, 0)
-		end),
-
-		Button("DestroyerButton", 43, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[2], "down", true, function()
-			if self.resource >= ItemPrices[2] then 
-				elf.resource = self.resource - ItemPrices[2]
-				GiveItem(actor, "Destroyer Capsule")
-				self.SuccessSound:Play(actor.Pos)
-			else
-				self.FailSound:Play(actor.Pos)
-			end
-		end,
-		function()
-			local Destroyer
-			if not Destroyer then
-				Destroyer = CreateMOSRotating("Factorio.rte/Destroyer Icon")
-			end
-			local Pos = ScreenPos(self, self.InteractiveBox["DestroyerButton"].Center.X, self.InteractiveBox["DestroyerButton"].Center.Y)
-			PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Destroyer, 0, 0)
-		end),
-
-		Button("GrenadeButton", 83, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[3], "down", true, function()
-			if self.resource >= ItemPrices[3] then
-				self.resource = self.resource - ItemPrices[3]
-				GiveItem(actor, "Grenade")
-				self.SuccessSound:Play(actor.Pos)
-			else
-				self.FailSound:Play(actor.Pos)
-			end
-		end,
-		function()
-			local Grenade
-			if not Grenade then
-				Grenade = CreateMOSRotating("Factorio.rte/Grenade Icon")
-			end
-			local Pos = ScreenPos(self, self.InteractiveBox["GrenadeButton"].Center.X, self.InteractiveBox["GrenadeButton"].Center.Y)
-			PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Grenade, 0, 0)
-		end),
-
-		Button("ClusterGButton", 120, 50, 50, 50, 80, true, true, "Cost: " .. ItemPrices[4], "down", true, function()
-			if self.resource >= ItemPrices[4] then
-				self.resource = self.resource - ItemPrices[4]
-				GiveItem(actor, "Cluster Grenade")
-				self.SuccessSound:Play(actor.Pos)
-			else
-				self.FailSound:Play(actor.Pos)
-			end
-		end,
-		function()
-			local ClusterGrenade
-			if not ClusterGrenade then
-				ClusterGrenade = CreateMOSRotating("Factorio.rte/Cluster Grenade Icon")
-			end
-			local Pos = ScreenPos(self, self.InteractiveBox["ClusterGButton"].Center.X, self.InteractiveBox["ClusterGButton"].Center.Y)
-			PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), ClusterGrenade, 0, 0)
-		end),
-
-
-		Button("CloseButton", 143, 0, 30, 30, 83, true, true, nil, nil, true, function()
-			self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
-		end,
-		function()
-			local Pos = ScreenPos(self, self.InteractiveBox["CloseButton"].Center.X, self.InteractiveBox["CloseButton"].Center.Y)
-			PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, 3), Pos + Vector(-7, -7), 20)
-			PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, -7), Pos + Vector(-7, 3), 20)
-		end),
-
-		Label("ConstructMenuTitle", 35, 0, 0, 0, MaterialCount(self), false, true, function()
 			return MaterialCount(self)
-		end),
-	})
+		end
+		)
+	}
+
+	self.LCPanels = {CMenu}
 end
 
 function UpdateMenu(self)
@@ -320,29 +336,34 @@ function UpdateMenu(self)
 end
 
 function InitializeTables(self)
-
 	self.InteractiveBox = {}
 
-	local ActualScreenW = FrameMan.PlayerScreenWidth * 2
-	local ActualScreenH = FrameMan.PlayerScreenHeight * 2
+	if SettingsMan.PrintDebugInfo then
+		print("\n--------------------------------------------------------\nYour Resolution: {" .. FrameMan.PlayerScreenWidth .. ", " .. FrameMan.PlayerScreenHeight .. "}\n--------------------------------------------------------")
+	end
 
-	local UpScaledScreenW = FrameMan.PlayerScreenWidth
-	local UpScaledScreenH = FrameMan.PlayerScreenHeight
-
-	local ScreenW = UpScaledScreenW / ActualScreenW
-	local ScreenH = UpScaledScreenH / ActualScreenH
+	local Resolution = Vector(FrameMan.PlayerScreenWidth / 1280, FrameMan.PlayerScreenHeight / 720)
 
     for _, Parent in ipairs(self.LCPanels) do
         self.InteractiveBox[Parent.Name] = {}
+
         local ParentPos = Vector(Parent.PosX, Parent.PosY)
-        local ParentWidth = Parent.Width * ScreenW
-        local ParentHeight = Parent.Height * ScreenH
+
+		ParentPos.X = ParentPos.X * Resolution.X
+		ParentPos.Y = ParentPos.Y * Resolution.Y
+		
+        local ParentWidth = Parent.Width
+        local ParentHeight = Parent.Height 
+
         self.InteractiveBox[Parent.Name] = Box(ParentPos, ParentWidth, ParentHeight)
 
+		if SettingsMan.PrintDebugInfo then
+			print("Parent: " .. Parent.Name .. " {" .. ParentWidth .. ", " .. ParentHeight .. "}")
+		end
         if Parent.Child then
             for _, Child in ipairs(Parent.Child) do
 
-                local Root = self.InteractiveBox[Parent.Name]
+                local Frame = self.InteractiveBox[Parent.Name]
 
                 local CBox = Child.ControlType == "COLLECTIONBOX"
                 local CButton = Child.ControlType == "BUTTON"
@@ -350,15 +371,20 @@ function InitializeTables(self)
 
                 if CBox or CButton then
                     local ChildPos = Vector(Child.PosX, Child.PosY)
-                    local ChildWidth = Child.Width * ScreenW
-                    local ChildHeight = Child.Height * ScreenH
+                    local ChildWidth = Child.Width
+                    local ChildHeight = Child.Height 
+
                     local NewPos = ParentPos + ChildPos
                     self.InteractiveBox[Child.Name] = Box(NewPos, ChildWidth, ChildHeight)
+
+					if SettingsMan.PrintDebugInfo then
+						print("Child: " .. Child.Name .. " {" .. ChildWidth .. ", " .. ChildHeight .. "}")
+					end
                 end
 
                 if Child.ControlType == "LABEL" then
-					Child.PosX = Child.PosX + Parent.PosX
-                    Child.PosY = Child.PosY + Parent.PosY
+					Child.PosX = Child.PosX + Parent.PosX * Resolution.X
+                    Child.PosY = Child.PosY + Parent.PosY * Resolution.Y
                 end
             end
         end
@@ -429,64 +455,64 @@ function Update(self)
 			local angle = actor:GetAimAngle(true)
 
 			for i = 1, self.RoundsFired do
-				local trace = Vector(self.digLength, 0):RadRotate(angle + RangeRand(-1, 1) * self.spreadRange);
-				local digPos = ConstructorTerrainRay(self.MuzzlePos, trace, 0);
+				local trace = Vector(self.digLength, 0):RadRotate(angle + RangeRand(-1, 1) * self.spreadRange)
+				local digPos = ConstructorTerrainRay(self.MuzzlePos, trace, 0)
 
 				if SceneMan:GetTerrMatter(digPos.X, digPos.Y) ~= rte.airID then
 
-					local digWeightTotal = 0;
-					local totalVel = Vector();
-					local found = 0;
+					local digWeightTotal = 0
+					local totalVel = Vector()
+					local found = 0
 
 					for x = 1, 3 do
 						for y = 1, 3 do
-							local checkPos = ConstructorWrapPos(Vector(digPos.X - 2 + x, digPos.Y - 2 + y));
-							local terrCheck = SceneMan:GetTerrMatter(checkPos.X, checkPos.Y);
-							local material = SceneMan:GetMaterialFromID(terrCheck);
+							local checkPos = ConstructorWrapPos(Vector(digPos.X - 2 + x, digPos.Y - 2 + y))
+							local terrCheck = SceneMan:GetTerrMatter(checkPos.X, checkPos.Y)
+							local material = SceneMan:GetMaterialFromID(terrCheck)
 							if material.StructuralIntegrity <= self.digStrength and material.StructuralIntegrity <= self.digStrength * RangeRand(0.5, 1.05) then
-								local px = SceneMan:DislodgePixel(checkPos.X, checkPos.Y);
+								local px = SceneMan:DislodgePixel(checkPos.X, checkPos.Y)
 								if px then
-									local digWeight = math.sqrt(material.StructuralIntegrity/self.digStrength);
-									local speed = 3;
+									local digWeight = math.sqrt(material.StructuralIntegrity/self.digStrength)
+									local speed = 3
 									if terrCheck == rte.goldID then
 										--Spawn a glowy gold pixel and delete the original
-										px.ToDelete = true;
-										px = CreateMOPixel("Gold Particle", "Base.rte");
-										px.Pos = checkPos;
+										px.ToDelete = true
+										px = CreateMOPixel("Gold Particle", "Base.rte")
+										px.Pos = checkPos
 										--Sharpness temporarily stores the ID of the target
-										px.Sharpness = actor.ID;
-										MovableMan:AddParticle(px);
+										px.Sharpness = actor.ID
+										MovableMan:AddParticle(px)
 									else
-										px.Sharpness = self.ID;
-										px.Lifetime = 1000;
-										speed = speed + (1 - digWeight) * 5;
-										digWeightTotal = digWeightTotal + digWeight;
+										px.Sharpness = self.ID
+										px.Lifetime = 1000
+										speed = speed + (1 - digWeight) * 5
+										digWeightTotal = digWeightTotal + digWeight
 									end
-									px.IgnoreTerrain = true;
-									px.Vel = Vector(trace.X, trace.Y):SetMagnitude(-speed):RadRotate(RangeRand(-0.5, 0.5));
-									totalVel = totalVel + px.Vel;
-									px:AddScript("Base.rte/Devices/Tools/Constructor/ConstructorCollect.lua");
-									found = found + 1;
+									px.IgnoreTerrain = true
+									px.Vel = Vector(trace.X, trace.Y):SetMagnitude(-speed):RadRotate(RangeRand(-0.5, 0.5))
+									totalVel = totalVel + px.Vel
+									px:AddScript("Base.rte/Devices/Tools/Constructor/ConstructorCollect.lua")
+									found = found + 1
 								end
 							end
 						end
 					end
 					if found > 0 then
 						if digWeightTotal > 0 then
-							digWeightTotal = digWeightTotal/9;
-							self.resource = math.min(self.resource + digWeightTotal * self.Income, self.maxResource);
+							digWeightTotal = digWeightTotal/9
+							self.resource = math.min(self.resource + digWeightTotal * self.Income, self.maxResource)
 						end
-						local collectFX = CreateMOPixel("Particle Constructor Gather Material" .. (digWeightTotal > 0.5 and " Big" or ""));
-						collectFX.Vel = totalVel/found;
-						collectFX.Pos = Vector(digPos.X, digPos.Y) + collectFX.Vel * rte.PxTravelledPerFrame;
+						local collectFX = CreateMOPixel("Particle Constructor Gather Material" .. (digWeightTotal > 0.5 and " Big" or ""))
+						collectFX.Vel = totalVel/found
+						collectFX.Pos = Vector(digPos.X, digPos.Y) + collectFX.Vel * rte.PxTravelledPerFrame
 
-						MovableMan:AddParticle(collectFX);
+						MovableMan:AddParticle(collectFX)
 					else
 						self:Deactivate()
 					end
 				else	-- deactivate if digging air
-					self:Deactivate();
-					break;
+					self:Deactivate()
+					break
 				end
 			end
 		end
@@ -519,19 +545,19 @@ function UpdateFCursor(self, actor)
 
 	-- Don't let the cursor leave the screen
 	if self.Mouse.X - self.Mid.X < -self.ResX2 then
-		self.Mouse.X = self.Mid.X - self.ResX2;
+		self.Mouse.X = self.Mid.X - self.ResX2
 	end
 
 	if self.Mouse.Y - self.Mid.Y < -self.ResY2 then
-		self.Mouse.Y = self.Mid.Y - self.ResY2;
+		self.Mouse.Y = self.Mid.Y - self.ResY2
 	end
 
 	if self.Mouse.X - self.Mid.X > self.ResX2 - 10 then
-		self.Mouse.X = self.Mid.X + self.ResX2 - 10;
+		self.Mouse.X = self.Mid.X + self.ResX2 - 10
 	end
 
 	if self.Mouse.Y - self.Mid.Y > self.ResY2 - 10 then
-		self.Mouse.Y = self.Mid.Y + self.ResY2 - 10;
+		self.Mouse.Y = self.Mid.Y + self.ResY2 - 10
 	end
 end
 
@@ -582,9 +608,9 @@ function ConstructorWrapPos(checkPos)
 end
 
 function ConstructorTerrainRay(start, trace, skip)
-	local hitPos = start + trace;
-	SceneMan:CastStrengthRay(start, trace, 0, hitPos, skip, rte.airID, SceneMan.SceneWrapsX);	
-	return hitPos;
+	local hitPos = start + trace
+	SceneMan:CastStrengthRay(start, trace, 0, hitPos, skip, rte.airID, SceneMan.SceneWrapsX)	
+	return hitPos
 end
 
 
