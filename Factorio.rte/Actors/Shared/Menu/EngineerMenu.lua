@@ -142,7 +142,7 @@ InteractiveMenu.Engineer.Menu = function(self, actor, table)
 			end
 		),
 
-		InteractiveMenu.Label("ConstructMenuTitle", 25, 0, 0, 0, GetMaterialCount(self), false, true,
+		InteractiveMenu.Label("ConstructMenuTitle", 25, 0, GetMaterialCount(self), false, true,
 		function()
 			return GetMaterialCount(self)
 		end
