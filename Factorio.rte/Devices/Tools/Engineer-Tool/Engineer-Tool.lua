@@ -1,4 +1,5 @@
-dofile("Factorio.rte/Actors/Shared/Menu/EngineerMenu.lua")
+package.path = package.path .. ";Mods/Factorio.rte?.lua";
+require("Actors/Shared/Menu/EngineerMenu")
 
 function Create(self)
 

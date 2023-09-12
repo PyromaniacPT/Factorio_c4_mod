@@ -1,10 +1,12 @@
-dofile("[B]InteractiveMenu.rte/Script/InteractiveMenu.lua")
+package.path = package.path .. ";Mods/[B]InteractiveMenu.rte/Script/?.lua";
+require("InteractiveMenu")
 
 InteractiveMenu.InitializeCoreTable("Engineer")
 
 InteractiveMenu.Engineer.Create = function(self) 
 	self.FailSound = CreateSoundContainer("Factorio.rte/Failed Construction")
 	self.SuccessSound = CreateSoundContainer("Factorio.rte/Finished Construction")
+    self.ClickSound = CreateSoundContainer("Factorio.rte/Factorio Menu Click")
 
 	self.Activity = ActivityMan:GetActivity()
 end
@@ -21,134 +23,166 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
 	if playerControlled then
 		if device:GetNumberValue("ActiveEngineerMenu") == 1 then
 			device:SetNumberValue("ActiveEngineerMenu", 0)
-			InteractiveMenu.Engineer.Menu(self, actor, menu)
-			InteractiveMenu.CreateMenuCursor(self, actor, mouse, PATH)
+
+            self[menu] = {}
+
+            local function GetMaterialCount(self)
+                return "Material Count: " .. tostring(math.floor(self.Magazine and self.Magazine.RoundCount or self.resource))
+            end
+        
+            local function GiveItem(actor, ItemName)
+                actor:AddInventoryItem(CreateTDExplosive("Factorio.rte/" .. ItemName))
+            end
+        
+            local ItemPrices = {500, 1000, 350, 450, 1800}
+        
+            local CMenu = InteractiveMenu.Root("ConstructMenu", 700, 0, 150, 180, 0, false, {})
+
+            local MilitaryList = {
+                {Name = "DefenderButton",   Sprite = "Defender Icon",           Item = "Defender Capsule",  Price = 1},
+                {Name = "DestroyerButton",  Sprite = "Destroyer Icon",          Item = "Destroyer Capsule", Price = 2},
+                {Name = "GrenadeButton",    Sprite = "Grenade Icon",            Item = "Grenade",           Price = 3},
+                {Name = "ClusterGButton",   Sprite = "Cluster Grenade Icon",    Item = "Cluster Grenade",   Price = 4}
+            }
+
+            local function ExistanceCheck(RootName, List)
+                for i = #RootName.Child, 1, -1 do
+                    local child = CMenu.Child[i]
+                    for _, Button in ipairs(List) do
+                        if child.Name == Button.Name then
+                            table.remove(RootName.Child, i)
+                            break
+                        end
+                    end
+                end
+            end
+
+            local function DisplayMilitary(actor)
+                ExistanceCheck(CMenu, MilitaryList)
+
+                local Rows = 4
+                --local numRows = math.ceil(#MilitaryList / Rows) -- active num of rows
+
+                for i, MB in ipairs(MilitaryList) do
+                    local x = 7 + ((i - 1) % Rows + 1 - 1) * 35
+                    local y = 102 + (math.floor((i - 1) / Rows) + 1 - 1) * 35
+            
+                    local MilitaryButton = InteractiveMenu.Button(MB.Name, x, y, 26, 26, 248, self.resource >= ItemPrices[MB.Price] and 86 or 13, true, true, "Cost: " .. ItemPrices[MB.Price], "down", true, false,
+                        function()
+                            if self.resource >= ItemPrices[MB.Price] then
+                                self.resource = self.resource - ItemPrices[MB.Price]
+                                GiveItem(actor, MB.Item)
+                                self.SuccessSound:Play(actor.Pos)
+                            else
+                                self.FailSound:Play(actor.Pos)
+                            end
+                        end,
+                        function()
+                            local box = InteractiveMenu.GetBoxName(MB.Name)
+                            local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                            local spritePath = "Factorio.rte/" .. MB.Sprite
+                            PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
+                        end
+                    )
+                    table.insert(CMenu.Child, self.ItemBoxs + 2, MilitaryButton)
+                end
+                InteractiveMenu.InitializeTable(self, menu)
+            end
+            
+                CMenu.Child = {
+        
+                    InteractiveMenu.Box("ConstructMenuBackground", 0, 0, CMenu.Width, CMenu.Height, 250, true),
+
+                    InteractiveMenu.Button("CloseButton", 128, 4, 20, 20, 247, 251, true, true, nil, nil, true, false,
+                    function()
+                        self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
+                    end,
+                    function()
+                        local box = InteractiveMenu.GetBoxName("CloseButton")
+                        local ChildBox = InteractiveMenu.GetChildName(self, menu, "CloseButton")
+                        local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+
+
+                        PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
+                        PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(0, 15), Pos + Vector(15, 0), ChildBox.OnHover and 247 or 251)
+                    end
+                    ),
+            
+                    InteractiveMenu.Label("ConstructMenuTitle", CMenu.PosX + 25, 0, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
+            
+                    --Borders
+            
+                    InteractiveMenu.Box("CornerFrameUp", -2, 0, CMenu.Width, 8, 247, true),
+            
+                    InteractiveMenu.Box("CornerFrameDown", -4, CMenu.Height - 5, CMenu.Width + 4, 8, 247, true),
+            
+                    InteractiveMenu.Box("CornerFrameLeft", -4, 0, 8, CMenu.Height, 247, true),
+            
+            
+                    InteractiveMenu.Box("CornerFrameRight", CMenu.Width - 6, 0, 8, CMenu.Height + 3, 247, true),
+                }
+
+
+            local Category = {
+                --{Name = "LogicButton",                  ToolTip = "LOGISTICS",              func = function() DisplayLogic(actor) end, Sprite = "logistics"},
+                --{Name = "ProductButton",                ToolTip = "PRODUCTION",             func = function() DisplayProduct(actor) end, Sprite = "production"},
+                --{Name = "intermediateProductButton",    ToolTip = "INTERMEDIATE PRODUCTS",  func = function() DisplayINProduct(actor) end, Sprite = "intermediate-products"},
+                {Name = "MilitaryButton",               ToolTip = "MILITARY",               func = function() DisplayMilitary(actor) end, Sprite = "military"}
+            }
+
+            for i, CB in ipairs(Category) do
+                local x = 10 + (i - 1) * 70
+            
+                local button = InteractiveMenu.Button(CB.Name, x, 25, 60, 65, 247, 251, true, true, CB.ToolTip, "down", true, false,
+                    function()
+                        CB.func()
+                        self.ClickSound:Play(actor.Pos)
+                    end,
+                    function()
+                        local box = InteractiveMenu.GetBoxName(CB.Name)
+                        local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                        local spritePath = "Factorio.rte/" .. CB.Sprite
+                        PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(27, 35), CreateMOSRotating(spritePath), 0, 0)
+                    end
+                )
+
+                table.insert(CMenu.Child, 2, button)
+            end
+
+            local function DisplayCategoryBoxs()
+                for i, _ in ipairs(Category) do
+                    local x = 5 + (i - 1) * 70
+
+                    local CategoryBox = InteractiveMenu.Box("CategoryBox " .. i, x, 20, 70, 75, 247, true)
+
+                    table.insert(CMenu.Child, 2, CategoryBox)
+                end
+            end
+
+            DisplayCategoryBoxs()
+
+            local function DisplayItemBoxs()
+                local BoxCount = 4
+                local Rows = 4
+
+                for i = 1, BoxCount do
+                    local x = 5 + ((i - 1) % Rows + 1 - 1) * 35
+                    local y = 100 + (math.floor((i - 1) / Rows) + 1 - 1) * 35
+            
+                    local ButtonBox = InteractiveMenu.Box("ButtonBox " .. i, x, y, 30, 30, 247, true)
+
+                    table.insert(CMenu.Child, 2, ButtonBox)
+                    self.ItemBoxs = i
+                end
+            end
+
+            DisplayItemBoxs()
+
+            self[menu] = {CMenu}
+
+            InteractiveMenu.CreateMenu(self, actor, mouse, PATH, menu)
 		end
 	end
 
-	InteractiveMenu.PersistentMenu(self, actor, mouse, menu)
-end
-
-InteractiveMenu.Engineer.Menu = function(self, actor, table)
-
-	self[table] = {}
-
-	local function GetMaterialCount(self)
-		return "Material Count: " .. tostring(math.floor(self.Magazine and self.Magazine.RoundCount or self.resource))
-	end
-
-	local function GiveItem(actor, ItemName)
-		actor:AddInventoryItem(CreateTDExplosive("Factorio.rte/" .. ItemName))
-	end
-
-	local function GetBox(Name)
-		return InteractiveBox[Name]
-	end
-
-	local ItemPrices = {500, 1000, 350, 450, 1800}
-
-	local CMenu = InteractiveMenu.Root("ConstructMenu", 575, 190, 145, 80, 81, true, {})
-
-	CMenu.Child = {
-
-		InteractiveMenu.Button("DefenderButton", 5, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[1], "down", true,
-			function()
-				if self.resource >= ItemPrices[1] then
-					self.resource = self.resource - ItemPrices[1]
-					GiveItem(actor, "Defender Capsule")
-					self.SuccessSound:Play(actor.Pos)
-				else
-					self.FailSound:Play(actor.Pos)
-				end
-			end,
-			function()
-				local Defender
-				if not Defender then
-					Defender = CreateMOSRotating("Factorio.rte/Defender Icon")
-				end
-				local Pos = InteractiveMenu.ScreenPos(self, GetBox("DefenderButton").Center.X, GetBox("DefenderButton").Center.Y)
-				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Defender, 0, 0)
-			end
-		),
-
-		InteractiveMenu.Button("DestroyerButton", 40, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[2], "down", true,
-			function()
-				if self.resource >= ItemPrices[2] then 
-					self.resource = self.resource - ItemPrices[2]
-					GiveItem(actor, "Destroyer Capsule")
-					self.SuccessSound:Play(actor.Pos)
-				else
-					self.FailSound:Play(actor.Pos)
-				end
-			end,
-			function()
-				local Destroyer
-				if not Destroyer then
-					Destroyer = CreateMOSRotating("Factorio.rte/Destroyer Icon")
-				end
-				local Pos = InteractiveMenu.ScreenPos(self, GetBox("DestroyerButton").Center.X, GetBox("DestroyerButton").Center.Y)
-				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Destroyer, 0, 0)
-			end
-		),
-
-		InteractiveMenu.Button("GrenadeButton", 75, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[3], "down", true,
-			function()
-				if self.resource >= ItemPrices[3] then
-					self.resource = self.resource - ItemPrices[3]
-					GiveItem(actor, "Grenade")
-					self.SuccessSound:Play(actor.Pos)
-				else
-					self.FailSound:Play(actor.Pos)
-				end
-			end,
-			function()
-				local Grenade
-				if not Grenade then
-					Grenade = CreateMOSRotating("Factorio.rte/Grenade Icon")
-				end
-				local Pos = InteractiveMenu.ScreenPos(self, GetBox("GrenadeButton").Center.X, GetBox("GrenadeButton").Center.Y)
-				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), Grenade, 0, 0)
-			end
-		),
-
-		InteractiveMenu.Button("ClusterGButton", 110, 45, 30, 30, 80, true, true, "Cost: " .. ItemPrices[4], "down", true,
-			function()
-				if self.resource >= ItemPrices[4] then
-					self.resource = self.resource - ItemPrices[4]
-					GiveItem(actor, "Cluster Grenade")
-					self.SuccessSound:Play(actor.Pos)
-				else
-					self.FailSound:Play(actor.Pos)
-				end
-			end,
-			function()
-				local ClusterGrenade
-				if not ClusterGrenade then
-					ClusterGrenade = CreateMOSRotating("Factorio.rte/Cluster Grenade Icon")
-				end
-				local Pos = InteractiveMenu.ScreenPos(self, GetBox("ClusterGButton").Center.X, GetBox("ClusterGButton").Center.Y)
-				PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(-2, 0), ClusterGrenade, 0, 0)
-			end
-		),
-
-		InteractiveMenu.Button("CloseButton", 130, 0, 15, 15, 83, true, true, nil, nil, true,
-			function()
-				self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
-			end,
-			function()
-				local Pos = InteractiveMenu.ScreenPos(self, GetBox("CloseButton").Center.X, GetBox("CloseButton").Center.Y)
-				PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, 3), Pos + Vector(-7, -7), 20)
-				PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(3, -7), Pos + Vector(-7, 3), 20)
-			end
-		),
-
-		InteractiveMenu.Label("ConstructMenuTitle", 25, 0, GetMaterialCount(self), false, true,
-		function()
-			return GetMaterialCount(self)
-		end
-		)
-	}
-	self[table] = {CMenu}
-
-	InteractiveMenu.TableChecker(self, table)
+	InteractiveMenu.UpdateMenu(self, actor, mouse, menu)
 end
