@@ -30,8 +30,18 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                 return "Material Count: " .. tostring(math.floor(self.Magazine and self.Magazine.RoundCount or self.resource))
             end
         
-            local function GiveItem(actor, ItemName)
-                actor:AddInventoryItem(CreateTDExplosive("Factorio.rte/" .. ItemName))
+            local function GiveItem(actor, type, item)
+                actor:AddInventoryItem(type("Factorio.rte/" .. item))
+            end
+
+			local function SpawnMachine(actor, MachineActor)
+
+				local Machine = CreateActor("Factorio.rte/" .. MachineActor)
+				Machine.Pos = actor.Pos + Vector(0, 2)
+				Machine.Team = actor.Team
+				Machine.HUDVisible = false
+				MovableMan:AddActor(Machine)
+
             end
         
             local ItemPrices = {500, 1000, 350, 450, 1800}
@@ -39,26 +49,32 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
             local CMenu = InteractiveMenu.Root("ConstructMenu", 700, 0, 150, 180, 0, false, {})
 
             local MilitaryList = {
-                {Name = "DefenderButton",   Sprite = "Defender Icon",           Item = "Defender Capsule",  Price = 1},
-                {Name = "DestroyerButton",  Sprite = "Destroyer Icon",          Item = "Destroyer Capsule", Price = 2},
-                {Name = "GrenadeButton",    Sprite = "Grenade Icon",            Item = "Grenade",           Price = 3},
-                {Name = "ClusterGButton",   Sprite = "Cluster Grenade Icon",    Item = "Cluster Grenade",   Price = 4}
+                {Name = "DefenderButton",   Sprite = "Defender Icon",           Type = CreateTDExplosive, Item = "Defender Capsule",  Price = 1},
+                {Name = "DestroyerButton",  Sprite = "Destroyer Icon",          Type = CreateTDExplosive, Item = "Destroyer Capsule", Price = 2},
+                {Name = "GrenadeButton",    Sprite = "Grenade Icon",            Type = CreateTDExplosive, Item = "Grenade",           Price = 3},
+                {Name = "ClusterGButton",   Sprite = "Cluster Grenade Icon",    Type = CreateTDExplosive, Item = "Cluster Grenade",   Price = 4}
             }
 
-            local function ExistanceCheck(RootName, List)
+			local ProductList = {
+                {Name = "AssemblyMachine1Button",	Sprite = "Assembly Machine 1 Icon",	Spawn = "Assembly Machine 1",	Price = 5},
+            }
+
+            local function ExistanceCheck(RootName, ...)
                 for i = #RootName.Child, 1, -1 do
-                    local child = CMenu.Child[i]
-                    for _, Button in ipairs(List) do
-                        if child.Name == Button.Name then
-                            table.remove(RootName.Child, i)
-                            break
-                        end
-                    end
+                    local child = RootName.Child[i]
+					for _, CategoryList in ipairs({...}) do
+                    	for _, Button in ipairs(CategoryList) do
+                    	    if child.Name == Button.Name then
+                    	        table.remove(RootName.Child, i)
+                    	        break
+                    	    end
+                    	end
+					end
                 end
             end
 
             local function DisplayMilitary(actor)
-                ExistanceCheck(CMenu, MilitaryList)
+				ExistanceCheck(CMenu, ProductList, MilitaryList)
 
                 local Rows = 4
                 --local numRows = math.ceil(#MilitaryList / Rows) -- active num of rows
@@ -71,7 +87,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                         function()
                             if self.resource >= ItemPrices[MB.Price] then
                                 self.resource = self.resource - ItemPrices[MB.Price]
-                                GiveItem(actor, MB.Item)
+                                GiveItem(actor, MB.Type, MB.Item)
                                 self.SuccessSound:Play(actor.Pos)
                             else
                                 self.FailSound:Play(actor.Pos)
@@ -88,44 +104,76 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                 end
                 InteractiveMenu.InitializeTable(self, menu)
             end
+
+			local function DisplayProduct(actor)
+				ExistanceCheck(CMenu, ProductList, MilitaryList)
+
+                local Rows = 4
+                --local numRows = math.ceil(#ProductList / Rows) -- active num of rows
+
+                for i, PB in ipairs(ProductList) do
+                    local x = 7 + ((i - 1) % Rows + 1 - 1) * 35
+                    local y = 102 + (math.floor((i - 1) / Rows) + 1 - 1) * 35
             
-                CMenu.Child = {
+                    local ProductButton = InteractiveMenu.Button(PB.Name, x, y, 26, 26, 248, self.resource >= ItemPrices[PB.Price] and 86 or 13, true, true, "Cost: " .. ItemPrices[PB.Price], "down", true, false,
+                        function()
+                            if self.resource >= ItemPrices[PB.Price] then
+                                self.resource = self.resource - ItemPrices[PB.Price]
+								SpawnMachine(actor, PB.Spawn)
+                                self.SuccessSound:Play(actor.Pos)
+                            else
+                                self.FailSound:Play(actor.Pos)
+                            end
+                        end,
+                        function()
+                            local box = InteractiveMenu.GetBoxName(PB.Name)
+                            local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                            local spritePath = "Factorio.rte/" .. PB.Sprite
+                            PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
+                        end
+                    )
+                    table.insert(CMenu.Child, self.ItemBoxs + 2, ProductButton)
+                end
+                InteractiveMenu.InitializeTable(self, menu)
+            end
+            
+            CMenu.Child = {
         
-                    InteractiveMenu.Box("ConstructMenuBackground", 0, 0, CMenu.Width, CMenu.Height, 250, true),
+                InteractiveMenu.Box("ConstructMenuBackground", 0, 0, CMenu.Width, CMenu.Height, 250, true),
 
-                    InteractiveMenu.Button("CloseButton", 128, 4, 20, 20, 247, 251, true, true, nil, nil, true, false,
-                    function()
-                        self.Activity:SwitchToActor(actor, self.Team, self.Team) --We don't need to call DeleteFCursor, it will check if the cursor is alive regardless
-                    end,
-                    function()
-                        local box = InteractiveMenu.GetBoxName("CloseButton")
-                        local ChildBox = InteractiveMenu.GetChildName(self, menu, "CloseButton")
-                        local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                InteractiveMenu.Button("CloseButton", 128, 4, 20, 20, 247, 251, true, true, nil, nil, true, false,
+                function()
+                    InteractiveMenu.Delete(self, mouse)
+                end,
+                function()
+                    local box = InteractiveMenu.GetBoxName("CloseButton")
+                    local ChildBox = InteractiveMenu.GetChildName(self, menu, "CloseButton")
+                    local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
 
 
-                        PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
-                        PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(0, 15), Pos + Vector(15, 0), ChildBox.OnHover and 247 or 251)
-                    end
-                    ),
+                    PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
+                    PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(0, 15), Pos + Vector(15, 0), ChildBox.OnHover and 247 or 251)
+                end
+                ),
             
-                    InteractiveMenu.Label("ConstructMenuTitle", CMenu.PosX + 25, 0, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
+                InteractiveMenu.Label("ConstructMenuTitle", CMenu.PosX + 25, 0, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
             
-                    --Borders
+                --Borders
             
-                    InteractiveMenu.Box("CornerFrameUp", -2, 0, CMenu.Width, 8, 247, true),
+                InteractiveMenu.Box("CornerFrameUp", -2, 0, CMenu.Width, 8, 247, true),
             
-                    InteractiveMenu.Box("CornerFrameDown", -4, CMenu.Height - 5, CMenu.Width + 4, 8, 247, true),
+                InteractiveMenu.Box("CornerFrameDown", -4, CMenu.Height - 5, CMenu.Width + 4, 8, 247, true),
             
-                    InteractiveMenu.Box("CornerFrameLeft", -4, 0, 8, CMenu.Height, 247, true),
+                InteractiveMenu.Box("CornerFrameLeft", -4, 0, 8, CMenu.Height, 247, true),
             
             
-                    InteractiveMenu.Box("CornerFrameRight", CMenu.Width - 6, 0, 8, CMenu.Height + 3, 247, true),
-                }
+                InteractiveMenu.Box("CornerFrameRight", CMenu.Width - 6, 0, 8, CMenu.Height + 3, 247, true),
+            }
 
 
             local Category = {
                 --{Name = "LogicButton",                  ToolTip = "LOGISTICS",              func = function() DisplayLogic(actor) end, Sprite = "logistics"},
-                --{Name = "ProductButton",                ToolTip = "PRODUCTION",             func = function() DisplayProduct(actor) end, Sprite = "production"},
+                {Name = "ProductButton",                ToolTip = "PRODUCTION",             func = function() DisplayProduct(actor) end, Sprite = "production"},
                 --{Name = "intermediateProductButton",    ToolTip = "INTERMEDIATE PRODUCTS",  func = function() DisplayINProduct(actor) end, Sprite = "intermediate-products"},
                 {Name = "MilitaryButton",               ToolTip = "MILITARY",               func = function() DisplayMilitary(actor) end, Sprite = "military"}
             }

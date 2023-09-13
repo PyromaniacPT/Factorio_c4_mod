@@ -9,11 +9,8 @@ end
 
 -- Machines
 
-function FactorioAssemblyMenu(pieMenuOwner, pieMenu, pieSlice)
-	local gun = pieMenuOwner.EquippedItem
-	if gun then
-		ToMOSRotating(gun):SetNumberValue("ActiveAssemblyMenu", 1)
-	end
+function FactorioAssemblyMenu(self)
+	self:SetNumberValue("ActiveAssemblyMenu", 1)
 end
 
 -- Drones
