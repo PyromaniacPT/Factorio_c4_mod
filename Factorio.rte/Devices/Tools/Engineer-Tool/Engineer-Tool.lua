@@ -51,6 +51,14 @@ function Update(self)
 			self.Magazine.RotAngle = actor.RotAngle
 		end
 
+		if playerControlled then
+			self.operatedByAI = false
+		elseif actor.AIMode == Actor.AIMODE_GOLDDIG then
+			if ctrl:IsState(Controller.WEAPON_FIRE) and SceneMan:ShortestDistance(actor.Pos, ConstructorTerrainRay(actor.Pos, Vector(0, 50), 3), SceneMan.SceneWrapsX):MagnitudeIsLessThan(30) then
+				self.operatedByAI = true
+			end
+		end
+
 		if ctrl:IsState(Controller.WEAPON_FIRE) then
 
 			local angle = actor:GetAimAngle(true)
