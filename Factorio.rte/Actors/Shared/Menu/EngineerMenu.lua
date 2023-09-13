@@ -37,7 +37,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
 			local function SpawnMachine(actor, MachineActor)
 
 				local Machine = CreateActor("Factorio.rte/" .. MachineActor)
-				Machine.Pos = actor.Pos + Vector(0, 2)
+				Machine.Pos = actor.Pos + Vector(0, 4)
 				Machine.Team = actor.Team
 				Machine.HUDVisible = false
 				MovableMan:AddActor(Machine)
@@ -46,7 +46,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
         
             local ItemPrices = {500, 1000, 350, 450, 1800}
         
-            local CMenu = InteractiveMenu.Root("ConstructMenu", 570, 125, 150, 180, 0, false, {})
+            local CMenu = InteractiveMenu.Root("ConstructMenu", 570, 90, 150, 180, 0, false, {})
 
             local MilitaryList = {
                 {Name = "DefenderButton",   Sprite = "Defender Icon",           Type = CreateTDExplosive, Item = "Defender Capsule",  Price = 1},
