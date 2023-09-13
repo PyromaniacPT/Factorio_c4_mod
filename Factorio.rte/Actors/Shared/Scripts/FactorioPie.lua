@@ -10,7 +10,7 @@ end
 -- Machines
 
 function FactorioAssemblyMenu(self)
-	self:SetNumberValue("ActiveAssemblyMenu", 1)
+	self:SetNumberValue("ActiveAssemblyMenu", 0)
 end
 
 -- Drones

@@ -46,7 +46,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
         
             local ItemPrices = {500, 1000, 350, 450, 1800}
         
-            local CMenu = InteractiveMenu.Root("ConstructMenu", 700, 0, 150, 180, 0, false, {})
+            local CMenu = InteractiveMenu.Root("ConstructMenu", 570, 125, 150, 180, 0, false, {})
 
             local MilitaryList = {
                 {Name = "DefenderButton",   Sprite = "Defender Icon",           Type = CreateTDExplosive, Item = "Defender Capsule",  Price = 1},
@@ -156,7 +156,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                 end
                 ),
             
-                InteractiveMenu.Label("ConstructMenuTitle", CMenu.PosX + 25, 0, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
+                InteractiveMenu.Label("ConstructMenuTitle", CMenu.PosX + 25, CMenu.PosY + 1, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
             
                 --Borders
             

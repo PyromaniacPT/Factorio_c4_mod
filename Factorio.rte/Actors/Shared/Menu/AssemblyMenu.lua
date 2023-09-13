@@ -21,12 +21,12 @@ InteractiveMenu.Assembly.Update = function(self, actor)
 	local PATH = "Factorio.rte/Factorio Mouse"
 
 	if playerControlled then
-		if actor:GetNumberValue("ActiveAssemblyMenu") == 1 then
-			actor:SetNumberValue("ActiveAssemblyMenu", 0)
+		if actor:GetNumberValue("ActiveAssemblyMenu") == 0 then
+			actor:SetNumberValue("ActiveAssemblyMenu", 1)
 
             self[menu] = {}
         
-            local ASSMenu = InteractiveMenu.Root("AssemblyMenu", 700, 0, 150, 180, 0, false, {})
+            local ASSMenu = InteractiveMenu.Root("AssemblyMenu", 570, 125, 150, 180, 0, false, {})
 
             local function ExistanceCheck(RootName, ...)
                 for i = #RootName.Child, 1, -1 do
@@ -61,7 +61,7 @@ InteractiveMenu.Assembly.Update = function(self, actor)
                 end
                 ),
             
-                InteractiveMenu.Label("AssemblyMenuTitle", ASSMenu.PosX + 25, 0, "Test", false, true),
+                InteractiveMenu.Label("AssemblyMenuTitle", ASSMenu.PosX + 25, ASSMenu.PosY + 1, "Test", false, true),
             
                 --Borders
             
@@ -78,6 +78,10 @@ InteractiveMenu.Assembly.Update = function(self, actor)
             self[menu] = {ASSMenu}
 
             InteractiveMenu.CreateMenu(self, actor, mouse, PATH, menu)
+		end
+	else
+		if actor:GetNumberValue("ActiveAssemblyMenu") ~= 0 then
+			actor:SetNumberValue("ActiveAssemblyMenu", 0)
 		end
 	end
 
