@@ -53,7 +53,7 @@ InteractiveMenu.Assembly.Update = function(self, actor)
                 function()
                     local box = InteractiveMenu.GetBoxName("AssemblyCloseButton")
                     local ChildBox = InteractiveMenu.GetChildName(self, menu, "AssemblyCloseButton")
-                    local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                    local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
 
 
                     PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
@@ -61,7 +61,7 @@ InteractiveMenu.Assembly.Update = function(self, actor)
                 end
                 ),
             
-                InteractiveMenu.Label("AssemblyMenuTitle", ASSMenu.PosX + 25, ASSMenu.PosY + 1, "Test", false, true),
+                InteractiveMenu.Label("AssemblyMenuTitle", 0, 0, 0, 0, 100, 100, "Test", false, true),
             
                 --Borders
             

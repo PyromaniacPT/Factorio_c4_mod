@@ -95,7 +95,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                         end,
                         function()
                             local box = InteractiveMenu.GetBoxName(MB.Name)
-                            local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                            local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
                             local spritePath = "Factorio.rte/" .. MB.Sprite
                             PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
                         end
@@ -127,7 +127,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                         end,
                         function()
                             local box = InteractiveMenu.GetBoxName(PB.Name)
-                            local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                            local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
                             local spritePath = "Factorio.rte/" .. PB.Sprite
                             PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
                         end
@@ -148,7 +148,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                 function()
                     local box = InteractiveMenu.GetBoxName("CloseButton")
                     local ChildBox = InteractiveMenu.GetChildName(self, menu, "CloseButton")
-                    local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                    local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
 
 
                     PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
@@ -156,7 +156,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                 end
                 ),
             
-                InteractiveMenu.Label("ConstructMenuTitle", CMenu.PosX + 25, CMenu.PosY + 1, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
+                InteractiveMenu.Label("ConstructMenuTitle", 0, 0, 0, 0, 150, 150, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
             
                 --Borders
             
@@ -188,7 +188,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                     end,
                     function()
                         local box = InteractiveMenu.GetBoxName(CB.Name)
-                        local Pos = InteractiveMenu.ScreenPos(self, box.Corner.X, box.Corner.Y)
+                        local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
                         local spritePath = "Factorio.rte/" .. CB.Sprite
                         PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(27, 35), CreateMOSRotating(spritePath), 0, 0)
                     end
