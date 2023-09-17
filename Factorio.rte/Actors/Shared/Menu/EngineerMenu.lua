@@ -140,7 +140,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
             
             CMenu.Child = {
 				InteractiveMenu.Box("ConstructMenuBorder", BorderX, BorderY, CMenu.Width - BorderX + 5, CMenu.Height - BorderY + 5, 247, true),
-                InteractiveMenu.Box("ConstructMenuBackground", 0, 0, CMenu.Width, CMenu.Height, 250, true),
+                InteractiveMenu.Box("ConstructMenuBG", 0, 0, CMenu.Width, CMenu.Height, 250, true),
 
                 InteractiveMenu.Button("CloseButton", CMenu.Width - 20, CMenu.Height - 180, 20, 20, 247, 251, true, true, nil, nil, true, false,
                 function()
