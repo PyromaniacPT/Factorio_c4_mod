@@ -7,8 +7,6 @@ InteractiveMenu.Engineer.Create = function(self)
 	self.FailSound = CreateSoundContainer("Factorio.rte/Failed Construction")
 	self.SuccessSound = CreateSoundContainer("Factorio.rte/Finished Construction")
     self.ClickSound = CreateSoundContainer("Factorio.rte/Factorio Menu Click")
-
-	self.Activity = ActivityMan:GetActivity()
 end
 
 
@@ -100,7 +98,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                             PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
                         end
                     )
-                    table.insert(CMenu.Child, self.ItemBoxs + 2, MilitaryButton)
+                    table.insert(CMenu.Child, self.ItemBoxs + 3, MilitaryButton)
                 end
                 InteractiveMenu.InitializeTable(self, menu)
             end
@@ -132,16 +130,19 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                             PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
                         end
                     )
-                    table.insert(CMenu.Child, self.ItemBoxs + 2, ProductButton)
+                    table.insert(CMenu.Child, self.ItemBoxs + 3, ProductButton)
                 end
                 InteractiveMenu.InitializeTable(self, menu)
             end
+
+			local BorderX = -5
+			local BorderY = -5
             
             CMenu.Child = {
-        
+				InteractiveMenu.Box("ConstructMenuBorder", BorderX, BorderY, CMenu.Width - BorderX + 5, CMenu.Height - BorderY + 5, 247, true),
                 InteractiveMenu.Box("ConstructMenuBackground", 0, 0, CMenu.Width, CMenu.Height, 250, true),
 
-                InteractiveMenu.Button("CloseButton", 128, 4, 20, 20, 247, 251, true, true, nil, nil, true, false,
+                InteractiveMenu.Button("CloseButton", CMenu.Width - 20, CMenu.Height - 180, 20, 20, 247, 251, true, true, nil, nil, true, false,
                 function()
                     InteractiveMenu.Delete(self, mouse)
                 end,
@@ -156,18 +157,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                 end
                 ),
             
-                InteractiveMenu.Label("ConstructMenuTitle", 0, 0, 0, 0, 150, 150, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
-            
-                --Borders
-            
-                InteractiveMenu.Box("CornerFrameUp", -2, 0, CMenu.Width, 8, 247, true),
-            
-                InteractiveMenu.Box("CornerFrameDown", -4, CMenu.Height - 5, CMenu.Width + 4, 8, 247, true),
-            
-                InteractiveMenu.Box("CornerFrameLeft", -4, 0, 8, CMenu.Height, 247, true),
-            
-            
-                InteractiveMenu.Box("CornerFrameRight", CMenu.Width - 6, 0, 8, CMenu.Height + 3, 247, true),
+                InteractiveMenu.Label("ConstructMenuTitle", 25, 0, 0, 0, 150, 150, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
             }
 
 
@@ -194,7 +184,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                     end
                 )
 
-                table.insert(CMenu.Child, 2, button)
+                table.insert(CMenu.Child, 3, button)
             end
 
             local function DisplayCategoryBoxs()
@@ -203,7 +193,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
 
                     local CategoryBox = InteractiveMenu.Box("CategoryBox " .. i, x, 20, 70, 75, 247, true)
 
-                    table.insert(CMenu.Child, 2, CategoryBox)
+                    table.insert(CMenu.Child, 3, CategoryBox)
                 end
             end
 
@@ -219,7 +209,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
             
                     local ButtonBox = InteractiveMenu.Box("ButtonBox " .. i, x, y, 30, 30, 247, true)
 
-                    table.insert(CMenu.Child, 2, ButtonBox)
+                    table.insert(CMenu.Child, 3, ButtonBox)
                     self.ItemBoxs = i
                 end
             end

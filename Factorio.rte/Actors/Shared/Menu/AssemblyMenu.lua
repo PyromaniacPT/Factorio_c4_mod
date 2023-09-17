@@ -41,9 +41,12 @@ InteractiveMenu.Assembly.Update = function(self, actor)
 					end
                 end
             end
+
+			local BorderX = -5
+			local BorderY = -5
             
             ASSMenu.Child = {
-        
+				InteractiveMenu.Box("AssemblyMenuBorder", BorderX, BorderY, ASSMenu.Width - BorderX + 5, ASSMenu.Height - BorderY + 5, 247, true),
                 InteractiveMenu.Box("AssemblyMenuBackground", 0, 0, ASSMenu.Width, ASSMenu.Height, 250, true),
 
                 InteractiveMenu.Button("AssemblyCloseButton", 128, 4, 20, 20, 247, 251, true, true, nil, nil, true, false,
@@ -61,18 +64,7 @@ InteractiveMenu.Assembly.Update = function(self, actor)
                 end
                 ),
             
-                InteractiveMenu.Label("AssemblyMenuTitle", 0, 0, 0, 0, 100, 100, "Test", false, true),
-            
-                --Borders
-            
-                InteractiveMenu.Box("AssemblyCornerFrameUp", -2, 0, ASSMenu.Width, 8, 247, true),
-            
-                InteractiveMenu.Box("AssemblyCornerFrameDown", -4, ASSMenu.Height - 5, ASSMenu.Width + 4, 8, 247, true),
-            
-                InteractiveMenu.Box("AssemblyCornerFrameLeft", -4, 0, 8, ASSMenu.Height, 247, true),
-            
-            
-                InteractiveMenu.Box("AssemblyCornerFrameRight", ASSMenu.Width - 6, 0, 8, ASSMenu.Height + 3, 247, true),
+                InteractiveMenu.Label("AssemblyMenuTitle", 25, 0, 0, 0, 100, 100, "Assembly", false, true),
             }
 
             self[menu] = {ASSMenu}
