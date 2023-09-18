@@ -48,7 +48,7 @@ InteractiveMenu.Assembly.Update = function(self, actor)
                 end
             end
 
-			local ItemPrices = {500, 1000, 350, 450, 1}
+			local ItemPrices = {500, 1000, 350, 450}
 
 			local function GetMaterialCount(self)
                 return "Material Count: " .. tostring(math.floor(actor:GetNumberValue("AssemblyMaterial")))
@@ -81,7 +81,7 @@ InteractiveMenu.Assembly.Update = function(self, actor)
                 end
 				),
 
-                InteractiveMenu.Label("AssemblyMenuTitle", 0, 0, 0, 0, 100, 100, "A S S E M B L Y\nT I E R 1 \nA U T O M A T I O N", true, true),
+                InteractiveMenu.Label("AssemblyMenuTitle", 0, 0, 0, 0, 100, 100, "A S S E M B L Y\nT I E R 2 \nA U T O M A T I O N", true, true),
 				InteractiveMenu.Label("AssemblyMenuMaterialCount", 0, 29, 0, 0, 100, 100, GetMaterialCount(self), false, true, function() return GetMaterialCount(self) end),
             }
 
