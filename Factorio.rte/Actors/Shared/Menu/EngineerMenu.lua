@@ -95,7 +95,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                             local box = InteractiveMenu.GetBoxName(MB.Name)
                             local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
                             local spritePath = "Factorio.rte/" .. MB.Sprite
-                            PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
+                            PrimitiveMan:DrawBitmapPrimitive(InteractiveMenu.GetScreen(actor), Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
                         end
                     )
                     table.insert(CMenu.Child, self.ItemBoxs + 3, MilitaryButton)
@@ -127,7 +127,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                             local box = InteractiveMenu.GetBoxName(PB.Name)
                             local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
                             local spritePath = "Factorio.rte/" .. PB.Sprite
-                            PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
+                            PrimitiveMan:DrawBitmapPrimitive(InteractiveMenu.GetScreen(actor), Pos + Vector(11, 14), CreateMOSRotating(spritePath), 0, 0)
                         end
                     )
                     table.insert(CMenu.Child, self.ItemBoxs + 3, ProductButton)
@@ -139,10 +139,10 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
 			local BorderY = -5
             
             CMenu.Child = {
-				InteractiveMenu.Box("ConstructMenuBorder", BorderX, BorderY, CMenu.Width - BorderX + 5, CMenu.Height - BorderY + 5, 247, true),
+				InteractiveMenu.Box("ConstructMenuFG", BorderX, BorderY, CMenu.Width - BorderX + 5, CMenu.Height - BorderY + 5, 247, true),
                 InteractiveMenu.Box("ConstructMenuBG", 0, 0, CMenu.Width, CMenu.Height, 250, true),
 
-                InteractiveMenu.Button("CloseButton", CMenu.Width - 20, CMenu.Height - 180, 20, 20, 247, 251, true, true, nil, nil, true, false,
+                InteractiveMenu.Button("CloseButton", CMenu.Width - 20, 0, 20, 20, 247, 251, true, true, nil, nil, true, false,
                 function()
                     InteractiveMenu.Delete(self, mouse)
                 end,
@@ -152,8 +152,8 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                     local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
 
 
-                    PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
-                    PrimitiveMan:DrawLinePrimitive(self.CurrentScreen, Pos + Vector(0, 15), Pos + Vector(15, 0), ChildBox.OnHover and 247 or 251)
+                    PrimitiveMan:DrawLinePrimitive(InteractiveMenu.GetScreen(actor), Pos + Vector(15, 15), Pos + Vector(0, 0), ChildBox.OnHover and 247 or 251)
+                    PrimitiveMan:DrawLinePrimitive(InteractiveMenu.GetScreen(actor), Pos + Vector(0, 15), Pos + Vector(15, 0), ChildBox.OnHover and 247 or 251)
                 end
                 ),
             
@@ -180,7 +180,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                         local box = InteractiveMenu.GetBoxName(CB.Name)
                         local Pos = InteractiveMenu.ScreenPos(self, actor, box.Corner.X, box.Corner.Y)
                         local spritePath = "Factorio.rte/" .. CB.Sprite
-                        PrimitiveMan:DrawBitmapPrimitive(self.CurrentScreen, Pos + Vector(27, 35), CreateMOSRotating(spritePath), 0, 0)
+                        PrimitiveMan:DrawBitmapPrimitive(InteractiveMenu.GetScreen(actor), Pos + Vector(27, 35), CreateMOSRotating(spritePath), 0, 0)
                     end
                 )
 
@@ -207,7 +207,7 @@ InteractiveMenu.Engineer.Update = function(self, actor, device)
                     local x = 5 + ((i - 1) % Rows + 1 - 1) * 35
                     local y = 100 + (math.floor((i - 1) / Rows) + 1 - 1) * 35
             
-                    local ButtonBox = InteractiveMenu.Box("ButtonBox " .. i, x, y, 30, 30, 247, true)
+                    local ButtonBox = InteractiveMenu.Box("EngineerButtonBox " .. i, x, y, 30, 30, 247, true)
 
                     table.insert(CMenu.Child, 3, ButtonBox)
                     self.ItemBoxs = i
