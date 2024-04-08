@@ -3,14 +3,14 @@
 function FactorioEngineerMenu(pieMenuOwner, pieMenu, pieSlice)
 	local gun = pieMenuOwner.EquippedItem
 	if gun then
-		ToMOSRotating(gun):SetNumberValue("ActiveEngineerMenu", 1)
+		ToMOSRotating(gun):SetNumberValue("EngineerMenu", 1)
 	end
 end
 
 -- Machines
 
 function FactorioAssemblyMenu(self)
-	self:SetNumberValue("ActiveAssemblyMenu", 0)
+	self:SetNumberValue("AssemblyMenu", 0)
 end
 
 -- Drones
