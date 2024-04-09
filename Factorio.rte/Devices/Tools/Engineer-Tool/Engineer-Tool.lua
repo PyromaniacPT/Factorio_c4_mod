@@ -14,6 +14,7 @@ function Create(self)
 
 	self.DigLength = 50
 	self.SpreadRange = math.rad(self.ParticleSpreadRange)
+
 	self.Menu = require("imenu/core")
 	self.Menu:Initialize(self)
 
@@ -39,9 +40,6 @@ function OnMessage(self, message)
 	if message == "EngineerMenu" then CreateMenu(self) end
 end
 
-function GetMaterialCount(self)
-	return "Material Count: " .. tostring(math.floor(self.Magazine and self.Magazine.RoundCount or self.Resource))
-end
 function CreateMenu(self)
 
 	self.Menu.Main = igui.CollectionBox()
@@ -98,6 +96,7 @@ function CreateMenu(self)
 			end
 		end
 	end
+
 	local function DisplayProduct()
 		local rows = 4
 		for i, item in ipairs(productList) do
@@ -218,11 +217,9 @@ function Update(self)
 			self:RemoveNumberValue("EngineerMenu")
 		end
 
-		if self.Menu.Open then
+		if self.Menu:Update(actor) then
 			self.Menu.Main:Update(actor)
 		end
-
-		self.Menu:Update(actor)
 
 		if ctrl:IsState(Controller.WEAPON_FIRE) then
 
@@ -273,11 +270,11 @@ function Update(self)
 					end
 					if found > 0 then
 						if digWeightTotal > 0 then
-							digWeightTotal = digWeightTotal/9
+							digWeightTotal = digWeightTotal / 9
 							self.Resource = math.min(self.Resource + digWeightTotal * self.Income, self.MaxResource)
 						end
 						local collectFX = CreateMOPixel("Particle Constructor Gather Material" .. (digWeightTotal > 0.5 and " Big" or ""))
-						collectFX.Vel = totalVel/found
+						collectFX.Vel = totalVel / found
 						collectFX.Pos = Vector(digPos.X, digPos.Y) + collectFX.Vel * rte.PxTravelledPerFrame
 
 						MovableMan:AddParticle(collectFX)
@@ -308,6 +305,11 @@ function ConstructorTerrainRay(start, trace, skip)
 	local hitPos = start + trace
 	SceneMan:CastStrengthRay(start, trace, 0, hitPos, skip, rte.airID, SceneMan.SceneWrapsX)	
 	return hitPos
+end
+
+
+function Destroy(self)
+	--InteractiveMenu.Destroy(self, "FMouse")
 end
 
 

@@ -194,10 +194,10 @@ function Update(self)
 	local screen = ActivityMan:GetActivity():ScreenOfPlayer(ctrl.Player)
 
 	self.Menu:MessageEntity(self, self.PresetName .. " Menu")
-	if self.Menu.Open then
+	if self.Menu:Update(self) then
 		self.Menu.Main:Update(self)
+		self.Menu:DrawCursor(screen)
 	end
-	self.Menu:Update(self)
 
 	local closestActor = MovableMan:GetClosestActor(self.Pos, 30, Vector(), self)
 	if closestActor then
