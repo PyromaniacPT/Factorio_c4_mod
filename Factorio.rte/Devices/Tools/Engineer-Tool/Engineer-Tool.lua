@@ -308,11 +308,6 @@ function ConstructorTerrainRay(start, trace, skip)
 end
 
 
-function Destroy(self)
-	--InteractiveMenu.Destroy(self, "FMouse")
-end
-
-
 
 
 
